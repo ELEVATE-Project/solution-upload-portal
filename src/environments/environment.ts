@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  baseurl: 'https://portal.karmayogibm.nic.in/'
+  baseUrl: 'http://localhost:5000/template/api/v1/'
 };  
 // Update this link during deployment
 /*

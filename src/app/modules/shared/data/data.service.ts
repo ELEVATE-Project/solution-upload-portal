@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class DataService {
-  public baseUrl = window["env" as any]["baseUrl" as any]  ;
+  public baseUrl: string = environment.baseUrl;
 
   constructor(private http: HttpClient) {
   }
