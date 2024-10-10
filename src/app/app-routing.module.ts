@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './modules/shared/guard/auth.guard';
+import { environment } from '../environments/environment'; // Import environment
 
 let routes: Routes = [
   {
@@ -14,12 +15,12 @@ let routes: Routes = [
   },
   {
     path: '',
-    redirectTo: window['env' as any]['customAuth' as any] ? 'template' : 'auth',
+    redirectTo: environment.customAuth ? 'template' : 'auth', // Use environment.customAuth
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: window['env' as any]['customAuth' as any] ? 'template' : 'auth',
+    redirectTo: environment.customAuth ? 'template' : 'auth', // Use environment.customAuth
     pathMatch: 'full'
   }
 ];

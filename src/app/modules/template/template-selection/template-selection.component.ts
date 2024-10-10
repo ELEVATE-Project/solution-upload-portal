@@ -27,7 +27,6 @@ export class TemplateSelectionComponent implements OnInit {
   public sortableElement: string = 'Uploads';
   solutiondetails: any = "";
   downloadbleUrl: any = "";
-  // customAuth: any = window["env" as any]["customAuth" as any];
   customAuth: any = environment.customAuth;
 
   constructor(

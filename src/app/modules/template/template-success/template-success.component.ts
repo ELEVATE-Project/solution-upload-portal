@@ -16,7 +16,6 @@ export class TemplateSuccessComponent implements OnInit {
   wbfile: any;
   solutionId: any = "";
   solutionUrl: any = "";
-  // customAuth: any = window["env" as any]["customAuth" as any];
   customAuth: any = environment.customAuth;
   isCopied: boolean = false;
 
