@@ -4,6 +4,7 @@ import { TemplateService } from '../../shared/services/template.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { Observable, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-template-success',
@@ -15,7 +16,8 @@ export class TemplateSuccessComponent implements OnInit {
   wbfile: any;
   solutionId: any = "";
   solutionUrl: any = "";
-  customAuth: any = window["env" as any]["customAuth" as any];
+  // customAuth: any = window["env" as any]["customAuth" as any];
+  customAuth: any = environment.customAuth;
   isCopied: boolean = false;
 
   constructor(

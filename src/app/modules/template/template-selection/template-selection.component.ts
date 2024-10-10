@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-template-selection',
@@ -25,7 +27,8 @@ export class TemplateSelectionComponent implements OnInit {
   public sortableElement: string = 'Uploads';
   solutiondetails: any = "";
   downloadbleUrl: any = "";
-  customAuth: any = window["env" as any]["customAuth" as any];
+  // customAuth: any = window["env" as any]["customAuth" as any];
+  customAuth: any = environment.customAuth;
 
   constructor(
     private templateService: TemplateService,

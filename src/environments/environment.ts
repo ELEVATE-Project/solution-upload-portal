@@ -5,7 +5,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:5000/template/api/v1/'
+  baseUrl: 'http://localhost:5000/template/api/v1/',
+  customAuth: false
 };  
 // Update this link during deployment
 /*
