@@ -13,7 +13,31 @@
         <div class="export-container">
           <div>
             <p class="congrats-message">Solution created successfully</p>
-            <h2>Solution Id : {{ this.solutionId }}</h2>
+
+            <!-- Single table for both program name and resources -->
+            <table class="solution-table">
+              <thead>
+                <!-- First row: Merged column for Program Name -->
+                <tr>
+                  <th colspan="2">
+                    <h2>Program Name : {{ programName }}</h2> <!-- Display the program name in merged columns -->
+                  </th>
+                </tr>
+                <!-- Second row: Resource Name and Solution Link as headers -->
+                <tr>
+                  <th>Resource Name</th>
+                  <th>Solution Link</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows for resource names and links -->
+                <tr *ngFor="let pair of solutionKeyValuePairs">
+                  <td>{{ pair.key }}</td>
+                  <td>{{ pair.value }}</td>
+                </tr>
+              </tbody>
+            </table>
+
           </div>
         </div>
       </mat-card-content>

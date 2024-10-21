@@ -2,43 +2,95 @@ import { AfterViewInit, Component, ViewChild, OnInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TemplateService } from '../../shared/services/template.service';
-import { Router } from '@angular/router';
-import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'table-pagination-example',
-  styleUrls: ['template-solution-list.component.css'],
-  templateUrl: 'template-solution-list.component.html',
+  selector: 'app-template-solution-list',
+  templateUrl: './template-solution-list.component.html',
+  styleUrls: ['./template-solution-list.component.css']
 })
-export class TemplateSolutionListComponent implements AfterViewInit, OnInit {
-  displayedColumns: string[] = ['solutionId', 'solutionName', 'startDate', 'endDate', 'action'];
-  dataSource = new MatTableDataSource<any>();
-  resourceType: string = ""
+export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = [];
+  dataSource = new MatTableDataSource<any>([]);
+  selectedTemplateType: string = '';
+  fileName: any = ""
 
-  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  // Configuration object for different templates
+  templateConfigurations: { [key: string]: string[] } = {
+    'Survey': ['solutionId', 'solutionName', 'startDate', 'endDate', 'action'],
+    'Projects Template': ['Program', 'SolutionName', 'startDate', 'endDate','action'],
+    'Observation Template': ['program', 'startDate', 'endDate', 'solutionName', 'deepLink', 'action'],
+    'Observation with Rubrics Template': ['program', 'startDate', 'endDate', 'solutionName', 'deepLink', 'action']
+  };
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private templateService: TemplateService,
-    private router: Router,
-    private authService: AuthenticationService,
-    private toastr: ToastrService
-  ) {}
-
-  ngOnInit() {
-    this.fetchSolutions();
+    private toastr: ToastrService,
+    private route: ActivatedRoute
+  ) {
   }
 
-  fetchSolutions() {
-    this.templateService.getSurveySolutions(this.resourceType, 'getSolutions').subscribe(
+  ngOnInit(): void {
+    this.route.queryParams
+      .subscribe(params => {
+        this.fileName = params['fileName'];
+        console.log(this.fileName,"line no 40")
+      });
+    this.selectedTemplateType = this.getTemplateType(this.fileName);
+    this.displayedColumns = this.templateConfigurations[this.selectedTemplateType] || [];
+    this.loadSolutions();
+  }
+  
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  loadSolutions(): void {
+    const resourceType = this.getResourceType(this.fileName);
+    const extension = this.getExtension(this.fileName);
+    console.log(resourceType, "line no 46");
+    console.log(extension, "line no 47");
+  
+    this.templateService.getSurveySolutions(resourceType, extension).subscribe(
       (response: any) => {
-        if (response.status === 200 && response.code === "Success") {
-          this.dataSource.data = response.SolutionList.map((item: any) => ({
-            solutionId: item.SOLUTION_ID,
-            solutionName: item.SOLUTION_NAME,
-            startDate: item.START_DATE,
-            endDate: item.END_DATE
-          }));
+        console.log(response, "Line no 61");
+        console.log(resourceType);
+        
+        // Check for a successful response
+        if (response.status === 200 && response.code === 'Success') {
+          
+          // For 'Survey' template
+          if (this.selectedTemplateType == 'Survey') {
+            this.dataSource.data = response.csvPath.map((item: any) => {
+              return {
+              solutionId: item.SOLUTION_ID,
+              solutionName: item.SOLUTION_NAME,
+              startDate: item.START_DATE,
+              endDate: item.END_DATE
+              };
+            });
+            console.log(this.dataSource.data);
+          
+          // For 'Projects Template'
+          } else if (this.selectedTemplateType == 'Projects Template') {
+            console.log(response, "line no 73, in projects");
+            
+            // Corrected return structure
+            this.dataSource.data = response.csvPath.map((item: any) => {
+              return {
+                Program: item.PROGRAM_NAME,
+                SolutionName: item.SOLUTION_NAME,
+                startDate: item.START_DATE,
+                endDate: item.END_DATE
+              };
+            });
+            console.log(this.dataSource.data,"line no 89");
+          }
+  
         } else {
           this.toastr.error('Failed to load solutions');
         }
@@ -49,28 +101,55 @@ export class TemplateSolutionListComponent implements AfterViewInit, OnInit {
       }
     );
   }
+  
 
-  ngAfterViewInit() {
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
+  copyLink(element: any): void {
+    console.log(element,"solutionid")
+    const baseUrl = this.templateService.getEnvironmentUrl(); // Fetch the base URL from the service
+    const deepLink = `${baseUrl}${element || element.observationId}`;
+    navigator.clipboard.writeText(deepLink).then(
+      () => this.toastr.success('Link copied to clipboard!'),
+      () => this.toastr.error('Failed to copy link')
+    );
+  }
+
+  getTemplateType(templateType: string): string {
+    // Implement logic to determine the selected template type
+    switch (templateType) {
+      case 'Survey Template': return 'Survey';
+      case 'projects Template': return 'Projects Template';
+      case 'Observation Template': return 'observation';
+      case 'Observation with Rubrics Template': return 'observation';
+      default: return 'unknown';
+    } // Example return value, replace with actual logic
+  }
+
+  getResourceType(templateType: string): string {
+    console.log(templateType,"line no 99");
+    
+    switch (templateType) {
+      case 'Survey Template': return 'Survey';
+      case 'projects Template': return 'Projects Template';
+      case 'Observation Template': return 'observation';
+      case 'Observation with Rubrics Template': return 'observation';
+      default: return 'unknown';
     }
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filterPredicate = (data: any, filter: string) => {
-      return data.solutionId.toLowerCase().includes(filter) ||
-             data.solutionName.toLowerCase().includes(filter);
-    };
-    this.dataSource.filter = filterValue;
+  getExtension(templateType: string): string {
+    console.log(templateType,"line no 115");
+    
+    switch (templateType) {
+      case 'Survey Template': return 'getSolutions';
+      case 'projects Template': return 'getSolutions';
+      case 'Observation Template': return 'observation-extension';
+      case 'Observation with Rubrics Template': return 'observation-rubrics-extension';
+      default: return 'default-extension';
+    }
   }
 
-  copyLink(solutionId: string) {
-    const environmentUrl = this.templateService.getEnvironmentUrl(); // Fetch the base URL from the service
-    const link = `${environmentUrl}surveyml/${solutionId}`; // Corrected template literal
-    navigator.clipboard.writeText(link).then(
-      () => this.toastr.success('Link copied to clipboard!'),
-      (err) => this.toastr.error('Failed to copy link')
-    );
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }

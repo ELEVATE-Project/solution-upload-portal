@@ -93,6 +93,9 @@ export class TemplateService {
   getSurveySolutions(resourceType: string, extension: string): Observable<any> {
     return this.dataService.post({
       url: `survey/${extension}`,
+      headers: {
+        "Authorization": localStorage.getItem("token")
+      },
       data: { resourceType: resourceType }
     });
   }

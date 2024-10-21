@@ -12,10 +12,11 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./template-success.component.scss']
 })
 export class TemplateSuccessComponent implements OnInit {
-  isUserLogin: any = false;
-  wbfile: any;
-  solutionId: any = "";
-  solutionUrl: any = "";
+  isUserLogin: boolean = false;
+  wbfile: XLSX.WorkBook | null = null;
+  solutionDict: any = {}; // Holds the solution dictionary
+  programName: string = ''; // Holds the program name
+  solutionKeyValuePairs: { key: string, value: string }[] = []; // For displaying key-value pairs
   customAuth: any = environment.customAuth;
   isCopied: boolean = false;
 
@@ -24,73 +25,104 @@ export class TemplateSuccessComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private templateService: TemplateService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    // Subscribe to route parameters
-    this.route.params.subscribe(params => {
-      this.solutionId = params['solutionId'];
-    });
-  
     // Subscribe to query parameters
     this.route.queryParams.subscribe(params => {
-      this.solutionUrl = params['downloadbleUrl'];
-  
+      // console.log(params, "Query Params 29");
+
+      const solutionParam = params['solution'];
+      this.solutionDict = solutionParam ? JSON.parse(solutionParam) : {}; // Parse solutionDict from queryParams
+
+      // Check if solutionDict is empty
+      if (Object.keys(this.solutionDict).length === 0) {
+        console.error('No solutionDict provided in route');
+        return;
+      }
+
+      // Extract programName from queryParams
+      this.programName = params['program'] || 'Default Program Name'; // Use default if not provided
+
+      // Store key-value pairs from solutionDict for display
+      this.solutionKeyValuePairs = Object.entries(this.solutionDict).map(([key, value]) => {
+        return { key, value: String(value) }; // Ensure values are string
+      });
+
       // Check if the user is logged in
       this.isUserLogin = this.authService.isUserLoggedIn();
-  
-      // If the template file is not set, navigate to the template selection page
-      if (!this.templateService.templateFile) {
-        this.router.navigate(['/template/template-selection']);
-      } else {
-        // If the template file is set, handle the file change
-        this.onFileChange(this.templateService.templateFile);
+      if (!this.isUserLogin) {
+        console.error('User is not logged in');
+        this.router.navigate(['/auth/login']);
+        return;
       }
-    });
-  }  
 
-  copyText() {
-    /* Copy text into clipboard */
-    navigator.clipboard.writeText(this.solutionUrl).then(() => {
-      this.isCopied = true;
-      setTimeout(() => {
-        this.isCopied = false;
-      }, 2000); // Hide the "Copied!" message after 2 seconds
-    }).catch(err => {
+      // Check if a template file is present in the service
+      if (!this.templateService.templateFile) {
+        console.warn('No template file set, redirecting to template selection');
+        this.router.navigate(['/template/template-selection']);
+        return;
+      }
+
+      // Load the file if it exists
+      this.onFileChange(this.templateService.templateFile);
     });
   }
 
-  onLogout() {
+  // Handle logout
+  onLogout(): void {
     this.authService.logoutAccount();
     this.isUserLogin = false;
     this.router.navigate(['/auth/login']);
   }
 
-  onFileChange(evt: any) {
-    const target: DataTransfer = <DataTransfer>evt;
-    const reader: FileReader = new FileReader();
-    this.readFile(target, reader).subscribe((output) => { });
+  // Handle file change
+  onFileChange(fileInput: HTMLInputElement): void {
+    const file = fileInput.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      this.readFile(file, reader).subscribe({
+        next: (data) => {
+          console.log('File processed successfully', data);
+        },
+        error: (err) => {
+          console.error('Error processing file', err);
+        }
+      });
+    } else {
+      console.error('No file selected');
+    }
   }
 
-  readFile(target: DataTransfer, reader: FileReader): Observable<string> {
+  // Read the Excel file
+  readFile(file: File, reader: FileReader): Observable<string> {
     const sub = new Subject<string>();
-    reader.onload = (e: any) => {
-      const bstr: string = e.target.result;
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const bstr = e.target?.result as string;
       const wb: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
       this.wbfile = wb;
       const wsname: string = wb.SheetNames[0];
       const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-      /* save data */
       const data: any = XLSX.utils.sheet_to_json(ws);
       sub.next(data);
       sub.complete();
     };
 
-    reader.readAsBinaryString(target.files[0]);
+    reader.onerror = (error) => {
+      sub.error('Error reading file: ' + error);
+    };
+
+    reader.readAsBinaryString(file);
     return sub.asObservable();
   }
 
+  // Export the workbook file
   export(): void {
-    XLSX.writeFile(this.wbfile, `$file.xlsx`);
+    if (this.wbfile) {
+      const fileName = `exported_file_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(this.wbfile, fileName);
+    } else {
+      console.error('No workbook file available for export');
+    }
   }
 }

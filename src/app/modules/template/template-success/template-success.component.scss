@@ -1,91 +1,121 @@
+/* Container for the success message */
 .success-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10%;
+  margin-top: 5%; /* Adjusted for better centering */
 }
 
+/* Styling for the main card that contains the message */
 .template-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 5%;
+  padding: 3%; /* Reduced padding for a more compact look */
   background-color: #f7f7f7;
-  width: 80%; /* Adjust width as needed */
-  max-width: 800px; /* Set a maximum width for larger screens */
-  box-shadow: rgba(0, 0, 0, 0.15) 3px 6px 3px 0px; /* Add box-shadow for better visibility */
+  width: 80%;
+  max-width: 800px; /* Maximum width for larger screens */
+  box-shadow: rgba(0, 0, 0, 0.15) 3px 6px 3px 0px; /* Box-shadow for depth */
 }
 
+/* Flex container for sections inside the card */
 .template-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 20px; /* Maintain space between elements */
 }
 
-.export-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-}
-
+/* Styling for the success message */
 .congrats-message {
-  color: #8b0000cc;
+  color: #8b0000cc; /* Dark red color */
   font-weight: bold;
-  font-size: 2rem; /* Increased font size */
+  font-size: 2rem; /* Increased font size for emphasis */
   text-align: center; /* Centered text */
 }
 
-.explore-button {
-  margin-top: 30px;
-  height: 40px;
-  border-radius: 20px;
-  background-color: #8b0000;
-  padding: 0 30px;
-  color: white;
-  box-shadow: rgba(0, 0, 0, 0.15) 3px 6px 3px 0px;
-}
-
+/* Logo styling */
 .shiksha-logo {
   height: 70px;
   padding-left: 30px;
 }
 
+/* Header container adjustments */
 .header-container {
   height: 10%;
   display: grid;
-  box-shadow: 3px 3px 3px 3px rgb(224, 223, 223);
-  grid-template-columns: 80% 20%;
+  grid-template-columns: 80% 20%; /* Logo on the left, logout on the right */
+  box-shadow: 3px 3px 3px 3px rgb(224, 223, 223); /* Subtle box-shadow */
 }
 
+/* Logout button container */
 .log-out {
   padding-top: 20px;
   text-align: center;
   align-items: center;
 }
 
+/* Export button styling */
 .export-button {
   border-radius: 20px;
-  background-color: #008000b5;
+  background-color: #008000b5; /* Green background */
   padding: 0 70px;
   color: white;
 }
+
+/* Styling for heading elements */
 h2 {
   text-align: center;
-  align-items: center;
+  margin: 10px 0; /* Adjust margin for spacing */
 }
+
+/* Paragraph text size */
 p {
-  font-size: 10px
+  font-size: 12px; /* Increased for better readability */
+}
+
+/* Table Styles */
+
+/* Main table for program name and resources */
+.solution-table {
+  width: 100%; /* Full width of the container */
+  border-collapse: collapse; /* Remove space between borders */
+  margin-top: 20px; /* Spacing between the table and other elements */
+}
+
+/* First row merged for program name */
+.solution-table th[colspan="2"] {
+  text-align: center;
+  background-color: #f7f7f7; /* Apply background for merged column */
+  font-weight: bold;
+  font-size: 1.5rem;
+  padding: 15px; /* Extra padding for better spacing */
+}
+
+/* General table styling for headers and cells */
+.solution-table th,
+.solution-table td {
+  border: 1px solid #ccc; /* Border around each cell */
+  padding: 10px; /* Padding for better spacing */
+  text-align: left; /* Align text to the left */
+}
+
+/* Header styling for resource name and solution link */
+.solution-table th {
+  background-color: #f2f2f2; /* Light gray background for headers */
+  font-weight: bold; /* Bold text for headers */
+  text-align: center; /* Center text for headers */
+}
+
+.solution-table td {
+  text-align: left; /* Align text for table data */
 }
 
 .copied-message {
   color: green;
   font-weight: bold;
   margin-top: 10px;
+  text-align: center;
 }
-
-

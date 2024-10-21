@@ -7,48 +7,186 @@
       <input matInput (keyup)="applyFilter($event)" placeholder="Search solutions">
     </mat-form-field>
   </div>
-  <table mat-table [dataSource]="dataSource" matSort>
 
-    <!-- Solution ID Column -->
-    <ng-container matColumnDef="solutionId">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Solution ID </th>
-      <td mat-cell *matCellDef="let element"> {{element.solutionId}} </td>
-    </ng-container>
+  <!-- Survey Template Table -->
+  <ng-container *ngIf="selectedTemplateType === 'Survey'">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Solution ID Column -->
+      <ng-container matColumnDef="solutionId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Solution ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.solutionId}} </td>
+      </ng-container>
 
-    <!-- Solution Name Column -->
-    <ng-container matColumnDef="solutionName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Solution Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.solutionName}} </td>
-    </ng-container>
+      <!-- Solution Name Column -->
+      <ng-container matColumnDef="solutionName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Solution Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.solutionName}} </td>
+      </ng-container>
 
-    <!-- Start Date Column -->
-    <ng-container matColumnDef="startDate">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
-      <td mat-cell *matCellDef="let element"> {{element.startDate | date:'medium'}} </td>
-    </ng-container>
+      <!-- Start Date Column -->
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.startDate | date:'medium'}} </td>
+      </ng-container>
 
-    <!-- End Date Column -->
-    <ng-container matColumnDef="endDate">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> End Date </th>
-      <td mat-cell *matCellDef="let element"> {{element.endDate | date:'medium'}} </td>
-    </ng-container>
+      <!-- End Date Column -->
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> End Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.endDate | date:'medium'}} </td>
+      </ng-container>
 
-    <!-- Action Column -->
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef> Action </th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button (click)="copyLink(element.solutionId)" matTooltip="Copy Solution ID">
-          <mat-icon>content_copy</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="copyLink(element.solutionId)" matTooltip="Copy Solution ID">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+  <!-- Project Template Table -->
+  <ng-container *ngIf="selectedTemplateType === 'Projects Template'">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Program Column -->
+      <ng-container matColumnDef="Program">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Program </th>
+        <td mat-cell *matCellDef="let element"> {{element.Program}} </td>
+      </ng-container>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
-                 showFirstLastButtons
-                 aria-label="Select page of solutions">
-  </mat-paginator>
+      <!-- Solution Name Column -->
+      <ng-container matColumnDef="SolutionName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Solution Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.SolutionName}} </td>
+      </ng-container>
+
+      <!-- Start Date Column -->
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.startDate}} </td>
+      </ng-container>
+
+      <!-- End Date Column -->
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> End Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.endDate}} </td>
+      </ng-container>
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="copyLink(element.solutionId)" matTooltip="Copy Deep Link">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </ng-container>
+
+  <!-- Observation Template Table -->
+  <ng-container *ngIf="selectedTemplateType === 'Observation Template'">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Program Column -->
+      <ng-container matColumnDef="program">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Program </th>
+        <td mat-cell *matCellDef="let element"> {{element.program}} </td>
+      </ng-container>
+
+      <!-- Start Date Column -->
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.startDate | date:'medium'}} </td>
+      </ng-container>
+
+      <!-- End Date Column -->
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> End Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.endDate | date:'medium'}} </td>
+      </ng-container>
+
+      <!-- Solution Name Column -->
+      <ng-container matColumnDef="solutionName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Solution Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.solutionName}} </td>
+      </ng-container>
+
+      <!-- Deep Link Column -->
+      <ng-container matColumnDef="deepLink">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Deep Link </th>
+        <td mat-cell *matCellDef="let element"> {{element.deepLink}} </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="copyLink(element.solutionId)" matTooltip="Copy Solution ID">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </ng-container>
+
+  <!-- Observation with Rubrics Template Table -->
+  <ng-container *ngIf="selectedTemplateType === 'Observation with Rubrics Template'">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Program Column -->
+      <ng-container matColumnDef="program">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Program </th>
+        <td mat-cell *matCellDef="let element"> {{element.program}} </td>
+      </ng-container>
+
+      <!-- Start Date Column -->
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Start Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.startDate | date:'medium'}} </td>
+      </ng-container>
+
+      <!-- End Date Column -->
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> End Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.endDate | date:'medium'}} </td>
+      </ng-container>
+
+      <!-- Solution Name Column -->
+      <ng-container matColumnDef="solutionName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Solution Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.solutionName}} </td>
+      </ng-container>
+
+      <!-- Deep Link Column -->
+      <ng-container matColumnDef="deepLink">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Deep Link </th>
+        <td mat-cell *matCellDef="let element"> {{element.deepLink}} </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="copyLink(element.solutionId)" matTooltip="Copy Solution ID">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </ng-container>
+
+  <!-- Pagination -->
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>

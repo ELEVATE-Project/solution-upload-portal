@@ -1,12 +1,10 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { TemplateService } from '../../shared/services/template.service';
-import { Router } from '@angular/router';
+import { Router } from '@angular/router'; // Updated to use Router instead of ActivatedRoute for navigation
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-
-
 @Component({
   selector: 'app-template-selection',
   templateUrl: './template-selection.component.html',
@@ -18,6 +16,7 @@ export class TemplateSelectionComponent implements OnInit {
   fileInput: any;
   fileName = '';
   loader: boolean = false;
+  loadingMessage: string = '';
   userSelectedFile: any;
   userUploadedFileType: any;
   templateLinks: any;
@@ -28,23 +27,16 @@ export class TemplateSelectionComponent implements OnInit {
   solutiondetails: any = "";
   downloadbleUrl: any = "";
   customAuth: any = environment.customAuth;
-
   constructor(
     private templateService: TemplateService,
-    private router: Router,
+    private router: Router, // Corrected to use Router for navigation
     private authService: AuthenticationService,
     private toaster: ToastrService
   ) {}
-
   @HostListener('window:popstate', ['$event'])
   onPopState(event: any) {
-    window.location.hash = 'dontgoback';
-    this.router.routeReuseStrategy.shouldReuseRoute = function () {
-      return false;
-    };
-    this.router.navigate(['/template/template-selection']);
+    this.router.navigate(['/template/template-selection']); // Updated popstate logic
   }
-
   ngOnInit(): void {
     history.pushState(null, '', window.location.href);
     this.templateService.selectTemplates().subscribe(
@@ -61,19 +53,15 @@ export class TemplateSelectionComponent implements OnInit {
     );
     this.isUserLogin = this.authService.isUserLoggedIn();
   }
-  
   onCickSelectedSurveyTemplate(selectedTemplate: any) {
     this.selectFile = selectedTemplate;
   }
-
   onCickSelectedSolutionTemplate(selectedTemplate: any) {
     this.selectedFile = selectedTemplate;
   }
-
   setSortableElement($event: string) {
     this.sortableElement = $event;
   }
-
   templateDownload() {
     if (this.selectFile) {
       const url = this.selectFile.templateLink;
@@ -85,7 +73,6 @@ export class TemplateSelectionComponent implements OnInit {
       alert("Please select a file to download");
     }
   }
-
   validateTemplate() {
     this.loader = true;
     if (this.userSelectedFile) {
@@ -95,11 +82,11 @@ export class TemplateSelectionComponent implements OnInit {
             this.templateService.userSelectedFile = event.result.templatePath;
             this.loader = false;
             this.templateService.templateError = data.result;
-            this.router.navigate(['/template/validation-result']);
+            this.router.navigate(['/template/validation-result']); // Navigate using Router
           },
           (error: any) => {
             this.loader = false;
-            this.toaster.error('Error validating template'); // Display error message to user
+            this.toaster.error('Error validating template');
           }
         );
       });
@@ -110,84 +97,113 @@ export class TemplateSelectionComponent implements OnInit {
       this.router.navigate(['/template/template-selection']);
     }
   }
-
   validateAndCreateSurvey() {
     this.loader = true;
+    this.loadingMessage = 'Solution creation is in progress. Please wait...';
+    
     if (this.userSelectedFile) {
-      this.templateService.uploadTemplates(this.userSelectedFile).subscribe(
-        (event: any) => {
-          this.templateService.validateTemplates(event.result.templatePath, this.userUploadedFileType, this.templateLinks).subscribe(
-            (data) => {
-              this.templateService.userSelectedFile = event.result.templatePath;
-              this.loader = false;
-              if (data.result.advancedErrors.data.length == 0 && data.result.basicErrors.data.length == 0) {
-                this.templateService.surveyCreation(this.templateService.userSelectedFile).subscribe(
-                  (surveyEvent: any) => {
-                    this.solutiondetails = surveyEvent.result[0];
-                    this.router.navigate(['/template/template-success', this.solutiondetails.solutionId], {
-                      queryParams: {
-                        downloadbleUrl: this.solutiondetails.downloadbleUrl
-                      }
-                    }); // Navigate to success page
-                  },
-                  (surveyError: any) => {
-                    console.error('Error creating survey:', surveyError);
-                    this.validateTemplate();
-                  }
+        // Step 1: Upload the selected file
+        this.templateService.uploadTemplates(this.userSelectedFile).subscribe(
+            (event: any) => {
+                // Step 2: Validate the uploaded template
+                this.templateService.validateTemplates(event.result.templatePath, this.userUploadedFileType, this.templateLinks).subscribe(
+                    (data) => {
+                        this.templateService.userSelectedFile = event.result.templatePath;
+                        
+                        // Step 3: Check for errors
+                        if (data.result.advancedErrors.data.length === 0 && data.result.basicErrors.data.length === 0) {
+                            // Step 4: Proceed to survey creation
+                            this.templateService.surveyCreation(this.templateService.userSelectedFile).subscribe(
+                                (surveyEvent: any) => {
+                                    const solutionId: any = surveyEvent.result.solutionId; // Get solutionId
+                                    // console.log(solutionId, "line 113");
+
+                                    // Step 5: Extract programName and solutionDict
+                                    const programName: string = solutionId.programName; // Extract the programName directly
+                                    // console.log(programName, "line 116");
+
+                                    const solutionDict: any = solutionId.solutionDict; // Extract the solutionDict
+                                    // console.log(solutionDict, "line 118");
+
+                                    // Step 6: Check if solutionDict is valid and navigate
+                                    if (solutionDict && typeof solutionDict === 'object') {
+                                        // console.log(solutionDict, "113");
+                                        this.loader = false;
+
+                                        // Navigate with solutionDict and programName in queryParams
+                                        this.router.navigate(['/template/template-success'], {
+                                            queryParams: { 
+                                                solution: JSON.stringify(solutionDict), // Pass only solutionDict
+                                                program: programName // Include programName in the queryParams
+                                            }
+                                        });
+                                    } else {
+                                        this.loader = false;
+                                        this.loadingMessage = 'Error: Solution creation failed. Please try again.';
+                                        this.toaster.error('Solution creation failed.');
+                                    }
+                                },
+                                (surveyError: any) => {
+                                    // Handle survey creation error
+                                    this.loader = false;
+                                    this.loadingMessage = 'Error creating survey. Please try again.';
+                                    this.toaster.error('Error creating survey');
+                                }
+                            );
+                        } else {
+                            // Step 7: Handle validation errors
+                            this.templateService.templateError = data.result;
+                            this.loader = false;
+                            this.router.navigate(['/template/validation-result']);
+                        }
+                    },
+                    (validationError: any) => {
+                        // Handle validation error
+                        this.loader = false;
+                        this.toaster.error('Error validating template');
+                    }
                 );
-              } else {
-                this.templateService.templateError = data.result;
-                this.router.navigate(['/template/validation-result']); // Navigate to validation result page
-              }
             },
-            (validationError: any) => {
-              this.loader = false;
-              console.error('Error validating template:', validationError);
-              this.toaster.error('Error validating template'); // Display error message to user
+            (uploadError: any) => {
+                // Handle upload error
+                this.loader = false;
+                this.toaster.error('Error uploading file');
             }
-          );
-        },
-        (uploadError: any) => {
-          this.loader = false;
-          console.error('Error uploading file:', uploadError);
-          this.toaster.error('Error uploading file'); // Display error message to user
-        }
-      );
+        );
     } else {
-      console.error('No file found');
-      this.loader = false;
-      this.toaster.error('No file found ', "Please select a file");
-      this.router.navigate(['/template/template-selection']);
+        // Handle case where no file is selected
+        this.loader = false;
+        this.toaster.error('No file found. Please select a file.');
+        this.router.navigate(['/template/template-selection']);
     }
-  }
+}
+
+
 
   fileUpload(fileInput: HTMLInputElement, userUploadedFile: any) {
     this.fileName = '';
     fileInput.click();
     this.userUploadedFileType = userUploadedFile;
   }
-
   onChange(event: any) {
     this.templateService.templateFile = event.target;
     this.userSelectedFile = event.target.files[0];
   }
-
   getFileDetails(event: any) {
     this.fileName = event.target.files[0].name;
   }
-
   handleSurveySolutions(action: 'download' | 'view', file: any) {
+    console.log('Action:', action, 'File:', file);
+    console.log(file)
     if (file && file.name) {
+      console.log(file.name,"line 199")
       this.loader = true;
       let observable$: Observable<any>;
-  
-      // Determine which service method to call based on the action
       if (action === 'download') {
         observable$ = this.templateService.getSurveySolutions(file.name, 'downloadSolutions');
       } else {
         observable$ = this.templateService.getSurveySolutions(file.name, 'getSolutions');
       }
-  
       observable$.subscribe(
         (response: any) => {
           if (action === 'download') {
@@ -200,16 +216,13 @@ export class TemplateSelectionComponent implements OnInit {
               this.toaster.success('Downloaded successfully');
               this.selectedFile = "";
             } else {
-              console.error('Invalid response or missing csvFilePath. Full response:', response);
+              console.error('Invalid response or missing csvFilePath.');
             }
           } else {
-            if (response) {
-              this.router.navigate(['/template/template-solution-list']).catch(err => {
+            this.router.navigate([`/template/template-solution-list`], { queryParams: { fileName: file.name } })
+              .catch(err => {
                 console.error('Navigation error:', err);
               });
-            } else {
-              console.error('Invalid response or missing csvFilePath. Full response:', response);
-            }
           }
           this.loader = false;
         },
@@ -222,5 +235,8 @@ export class TemplateSelectionComponent implements OnInit {
       alert(`Please select a file to ${action}`);
     }
   }
-  
+  onLogout() {
+    this.authService.logoutAccount();
+    this.router.navigate(['/auth/login']); // Navigate using Router
+  }
 }
