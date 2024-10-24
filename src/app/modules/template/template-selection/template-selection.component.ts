@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class TemplateSelectionComponent implements OnInit {
   selectFile: any;
+  type: any = '';
   selectedFile: any;
   fileInput: any;
   fileName = '';
@@ -194,47 +195,70 @@ export class TemplateSelectionComponent implements OnInit {
   }
   handleSurveySolutions(action: 'download' | 'view', file: any) {
     console.log('Action:', action, 'File:', file);
-    console.log(file)
+    
     if (file && file.name) {
-      console.log(file.name,"line 199")
-      this.loader = true;
-      let observable$: Observable<any>;
-      if (action === 'download') {
-        observable$ = this.templateService.getSurveySolutions(file.name, 'downloadSolutions');
-      } else {
-        observable$ = this.templateService.getSurveySolutions(file.name, 'getSolutions');
-      }
-      observable$.subscribe(
-        (response: any) => {
-          if (action === 'download') {
-            if (response.csvFilePath) {
-              const csvPath = response.csvFilePath;
-              const link = document.createElement('a');
-              link.href = csvPath;
-              link.download = `${file.name}_solutions.csv`;
-              link.click();
-              this.toaster.success('Downloaded successfully');
-              this.selectedFile = "";
-            } else {
-              console.error('Invalid response or missing csvFilePath.');
+        const trimmedFileName = file.name.trim(); // Trim spaces
+        console.log(trimmedFileName, "line 199");
+        this.loader = true;
+        let observable$: Observable<any>;
+        
+        if (action === 'download') {
+            observable$ = this.templateService.getSurveySolutions(trimmedFileName, 'downloadSolutions');
+        } else {
+            if (trimmedFileName === "projects Template") {
+                this.type = "improvementProject";
+            } 
+            else if (trimmedFileName === "survey Template") {
+                this.type = "survey";
+            } 
+            else if (trimmedFileName === "observation Template") {
+                this.type = "observation without rubrics"
             }
-          } else {
-            this.router.navigate([`/template/template-solution-list`], { queryParams: { fileName: file.name } })
-              .catch(err => {
-                console.error('Navigation error:', err);
-              });
-          }
-          this.loader = false;
-        },
-        (error: any) => {
-          console.error(`Error ${action === 'download' ? 'fetching' : 'viewing'} survey solutions:`, error);
-          this.loader = false;
+            else if (trimmedFileName === "observation With Rubrics Template") {
+                this.type = "observation with rubrics"
+            }
+            else {
+                this.type = "defaultType"; // Only if no other condition is met
+            }
+            
+            console.log(this.type, "line 209");
+            
+            // Fetch solutions based on the type
+            observable$ = this.templateService.getSurveySolutions(this.type, 'getSolutions');
         }
-      );
+        
+        observable$.subscribe(
+            (response: any) => {
+                if (action === 'download') {
+                    if (response.csvFilePath) {
+                        const csvPath = response.csvFilePath;
+                        const link = document.createElement('a');
+                        link.href = csvPath;
+                        link.download = `${file.name}_solutions.csv`;
+                        link.click();
+                        this.toaster.success('Downloaded successfully');
+                        this.selectedFile = "";
+                    } else {
+                        console.error('Invalid response or missing csvFilePath.');
+                    }
+                } else {
+                    this.router.navigate([`/template/template-solution-list`], { queryParams: { fileName: this.type } })
+                      .catch(err => {
+                          console.error('Navigation error:', err);
+                      });
+                }
+                this.loader = false;
+            },
+            (error: any) => {
+                console.error(`Error ${action === 'download' ? 'fetching' : 'viewing'} survey solutions:`, error);
+                this.loader = false;
+            }
+        );
     } else {
-      alert(`Please select a file to ${action}`);
+        alert(`Please select a file to ${action}`);
     }
-  }
+}
+
   onLogout() {
     this.authService.logoutAccount();
     this.router.navigate(['/auth/login']); // Navigate using Router

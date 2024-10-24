@@ -18,10 +18,10 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
 
   // Configuration object for different templates
   templateConfigurations: { [key: string]: string[] } = {
-    'Survey': ['solutionId', 'solutionName', 'startDate', 'endDate', 'action'],
-    'Projects Template': ['Program', 'SolutionName', 'startDate', 'endDate','action'],
-    'Observation Template': ['program', 'startDate', 'endDate', 'solutionName', 'deepLink', 'action'],
-    'Observation with Rubrics Template': ['program', 'startDate', 'endDate', 'solutionName', 'deepLink', 'action']
+    'survey': ['Program', 'SolutionName', 'startDate', 'endDate'],
+    'improvementProject': ['Program', 'SolutionName', 'startDate', 'endDate'],
+    'observation without rubrics': ['Program', 'SolutionName', 'startDate', 'endDate'],
+    'observation with rubrics': ['Program', 'SolutionName', 'startDate', 'endDate']
   };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -57,17 +57,17 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
   
     this.templateService.getSurveySolutions(resourceType, extension).subscribe(
       (response: any) => {
-        console.log(response, "Line no 61");
-        console.log(resourceType);
+        console.log(response, "Line no 60");
+        console.log(resourceType,"line 61");
         
         // Check for a successful response
         if (response.status === 200 && response.code === 'Success') {
           
           // For 'Survey' template
-          if (this.selectedTemplateType == 'Survey') {
+          if (this.selectedTemplateType == 'survey') {
             this.dataSource.data = response.csvPath.map((item: any) => {
               return {
-              solutionId: item.SOLUTION_ID,
+              Program: item.PROGRAM_NAME,
               solutionName: item.SOLUTION_NAME,
               startDate: item.START_DATE,
               endDate: item.END_DATE
@@ -76,7 +76,7 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
             console.log(this.dataSource.data);
           
           // For 'Projects Template'
-          } else if (this.selectedTemplateType == 'Projects Template') {
+          } else if (this.selectedTemplateType == 'improvementProject') {
             console.log(response, "line no 73, in projects");
             
             // Corrected return structure
@@ -90,7 +90,34 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
             });
             console.log(this.dataSource.data,"line no 89");
           }
-  
+          else if (this.selectedTemplateType == 'observation without rubrics') {
+            console.log(response, "line no 73, in projects");
+            
+            // Corrected return structure
+            this.dataSource.data = response.csvPath.map((item: any) => {
+              return {
+                Program: item.PROGRAM_NAME,
+                SolutionName: item.SOLUTION_NAME,
+                startDate: item.START_DATE,
+                endDate: item.END_DATE
+              };
+            });
+            console.log(this.dataSource.data,"line no 89");
+          }
+          else if (this.selectedTemplateType == 'observation with rubrics') {
+            console.log(response, "line no 73, in projects");
+            
+            // Corrected return structure
+            this.dataSource.data = response.csvPath.map((item: any) => {
+              return {
+                Program: item.PROGRAM_NAME,
+                SolutionName: item.SOLUTION_NAME,
+                startDate: item.START_DATE,
+                endDate: item.END_DATE
+              };
+            });
+            console.log(this.dataSource.data,"line no 89");
+          }
         } else {
           this.toastr.error('Failed to load solutions');
         }
@@ -116,10 +143,10 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
   getTemplateType(templateType: string): string {
     // Implement logic to determine the selected template type
     switch (templateType) {
-      case 'Survey Template': return 'Survey';
-      case 'projects Template': return 'Projects Template';
-      case 'Observation Template': return 'observation';
-      case 'Observation with Rubrics Template': return 'observation';
+      case 'survey': return 'survey';
+      case 'improvementProject': return 'improvementProject';
+      case 'observation without rubrics': return 'observation without rubrics';
+      case 'observation with rubrics': return 'observation with rubrics';
       default: return 'unknown';
     } // Example return value, replace with actual logic
   }
@@ -128,10 +155,10 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
     console.log(templateType,"line no 99");
     
     switch (templateType) {
-      case 'Survey Template': return 'Survey';
-      case 'projects Template': return 'Projects Template';
-      case 'Observation Template': return 'observation';
-      case 'Observation with Rubrics Template': return 'observation';
+      case 'survey': return 'survey';
+      case 'improvementProject': return 'improvementProject';
+      case 'observation without rubrics': return 'observation without rubrics';
+      case 'observation with rubrics': return 'observation with rubrics';
       default: return 'unknown';
     }
   }
@@ -140,10 +167,10 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
     console.log(templateType,"line no 115");
     
     switch (templateType) {
-      case 'Survey Template': return 'getSolutions';
-      case 'projects Template': return 'getSolutions';
-      case 'Observation Template': return 'observation-extension';
-      case 'Observation with Rubrics Template': return 'observation-rubrics-extension';
+      case 'survey': return 'getSolutions';
+      case 'improvementProject': return 'getSolutions';
+      case 'observation without rubrics': return 'getSolutions';
+      case 'observation with rubrics': return 'getSolutions';
       default: return 'default-extension';
     }
   }
