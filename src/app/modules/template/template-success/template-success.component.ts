@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../shared/services/authentication.service';
 import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-template-success',
@@ -24,7 +25,8 @@ export class TemplateSuccessComponent implements OnInit {
     private authService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
-    private templateService: TemplateService
+    private templateService: TemplateService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +69,10 @@ export class TemplateSuccessComponent implements OnInit {
       // Load the file if it exists
       this.onFileChange(this.templateService.templateFile);
     });
+  }
+
+  goBack() {
+    this.location.back();
   }
 
   // Handle logout
