@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { TemplateService } from '../../shared/services/template.service';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-template-solution-list',
@@ -29,7 +30,8 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
   constructor(
     private templateService: TemplateService,
     private toastr: ToastrService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
   ) {
   }
 
@@ -178,5 +180,8 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+  goBack() {
+    this.location.back();
   }
 }
