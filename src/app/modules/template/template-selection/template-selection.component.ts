@@ -201,26 +201,25 @@ export class TemplateSelectionComponent implements OnInit {
         console.log(trimmedFileName, "line 199");
         this.loader = true;
         let observable$: Observable<any>;
-        
+        if (trimmedFileName === "projects Template") {
+          this.type = "improvementProject";
+        } 
+        else if (trimmedFileName === "survey Template") {
+            this.type = "survey";
+        } 
+        else if (trimmedFileName === "observation Template") {
+            this.type = "observation without rubrics"
+        }
+        else if (trimmedFileName === "observation With Rubrics Template") {
+            this.type = "observation with rubrics"
+        }
+        else {
+            this.type = "defaultType"; // Only if no other condition is met
+        }
         if (action === 'download') {
-            observable$ = this.templateService.getSurveySolutions(trimmedFileName, 'downloadSolutions');
+            observable$ = this.templateService.getSurveySolutions(this.type, 'downloadSolutions');
+            console.log(this.type,"line 221")
         } else {
-            if (trimmedFileName === "projects Template") {
-                this.type = "improvementProject";
-            } 
-            else if (trimmedFileName === "survey Template") {
-                this.type = "survey";
-            } 
-            else if (trimmedFileName === "observation Template") {
-                this.type = "observation without rubrics"
-            }
-            else if (trimmedFileName === "observation With Rubrics Template") {
-                this.type = "observation with rubrics"
-            }
-            else {
-                this.type = "defaultType"; // Only if no other condition is met
-            }
-            
             console.log(this.type, "line 209");
             
             // Fetch solutions based on the type
@@ -231,10 +230,13 @@ export class TemplateSelectionComponent implements OnInit {
             (response: any) => {
                 if (action === 'download') {
                     if (response.csvFilePath) {
+                        console.log(response.csvFilePath,"line 233")
                         const csvPath = response.csvFilePath;
                         const link = document.createElement('a');
                         link.href = csvPath;
+                        console.log(link.href)
                         link.download = `${file.name}_solutions.csv`;
+                        console.log(link.download)
                         link.click();
                         this.toaster.success('Downloaded successfully');
                         this.selectedFile = "";

@@ -37,7 +37,7 @@ export class TemplateSuccessComponent implements OnInit {
 
       // Check if solutionDict is empty
       if (Object.keys(this.solutionDict).length === 0) {
-        console.error('No solutionDict provided in route');
+        console.error('No solution provided in route');
         return;
       }
 
