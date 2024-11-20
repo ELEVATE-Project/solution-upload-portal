@@ -147,8 +147,8 @@ export class TemplateSelectionComponent implements OnInit {
                                 (surveyError: any) => {
                                     // Handle survey creation error
                                     this.loader = false;
-                                    this.loadingMessage = 'Error creating survey. Please try again.';
-                                    this.toaster.error('Error creating survey');
+                                    this.loadingMessage = 'Error creating solution. Please try again.';
+                                    this.toaster.error('Error creating solution. Please try again!');
                                 }
                             );
                         } else {
