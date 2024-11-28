@@ -6,6 +6,7 @@
 export const environment = {
   production: false,
   baseUrl: 'http://localhost:5000/template/api/v1/',
+  stagingURl: 'https://staging.sunbirded.org/',
   customAuth: false
 };  
 // Update this link during deployment

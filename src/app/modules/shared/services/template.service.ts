@@ -9,6 +9,8 @@ import { environment } from '../../../../../src/environments/environment';
 })
 export class TemplateService {
   private baseUrl: string = environment.baseUrl;
+  private stagingURl: string = environment.stagingURl;
+
 
   templateFile: any;
   templateError: any;
@@ -18,6 +20,10 @@ export class TemplateService {
 
   getEnvironmentUrl(): string {
     return this.baseUrl;
+  }
+
+  getDeeplinkUrl(): string {
+    return this.stagingURl;
   }
 
   selectTemplates() {
@@ -33,7 +39,7 @@ export class TemplateService {
     const reqParam = {
       url: 'upload',
       headers: {
-        "Authorization": localStorage.getItem("token")
+        Authorization: localStorage.getItem('token')
       },
       data: formData
     };
@@ -44,32 +50,33 @@ export class TemplateService {
     const reqParam = {
       url: 'survey/create',
       headers: {
-        "Authorization": localStorage.getItem("token")
+        Authorization: localStorage.getItem('token')
       },
       data: {
         file: file_path
-      }
+      },
     };
     return this.dataService.post(reqParam);
   }
 
   getErrorExcelSheet() {
-    let templatePath = "/opt/backend/template-validation-portal-service/apiServices/src/main/tmp/Program_Template_latest_Final_--_30_12_2021_(6)1671623565-011165.xlsx";
+    let templatePath =
+      '/opt/backend/template-validation-portal-service/apiServices/src/main/tmp/Program_Template_latest_Final_--_30_12_2021_(6)1671623565-011165.xlsx';
     const reqParam = {
       url: 'errDownload',
       headers: {
-        "Authorization": localStorage.getItem("token")
-      }
+        Authorization: localStorage.getItem('token')
+      },
     };
     let queryParams = new HttpParams();
-    queryParams = queryParams.append("templatePath", templatePath);
+    queryParams = queryParams.append('templatePath', templatePath);
     return this.dataService.get(reqParam, queryParams);
   }
 
   validateTemplates(templatePath: any, userUploadedFileType: any, templateLinks: any) {
     let templateCode;
     templateLinks.forEach((templates: any) => {
-      let templateName: any = (templates.templateName.split(/(?=[A-Z])/)).join(" ");
+      let templateName: any = (templates.templateName.split(/(?=[A-Z])/)).join(' ');
       if (userUploadedFileType == templateName) {
         templateCode = templates?.templateCode;
       }
@@ -78,14 +85,14 @@ export class TemplateService {
     const reqParam = {
       url: 'validate',
       headers: {
-        "Authorization": localStorage.getItem("token")
+        Authorization: localStorage.getItem('token')
       },
       data: {
         request: {
-          "templatePath": templatePath,
-          "templateCode": JSON.stringify(templateCode)
-        }
-      }
+          templatePath: templatePath,
+          templateCode: JSON.stringify(templateCode)
+        },
+      },
     };
     return this.dataService.post(reqParam);
   }
@@ -94,14 +101,34 @@ export class TemplateService {
     return this.dataService.post({
       url: `survey/${extension}`,
       headers: {
-        "Authorization": localStorage.getItem("token")
+        Authorization: localStorage.getItem('token')
       },
       data: { resourceType: resourceType }
     });
   }
 
+  getBaseURL(): string {
+    const stagingURl = this.getDeeplinkUrl();
+    return `${stagingURl}`;  // Directly using the deeplink passed as argument
+  }
+  
   getSolutionLink(solutionId: string): string {
     const baseUrl = this.getEnvironmentUrl();
     return `${baseUrl}surveyml/${solutionId}`;
+  }
+
+  forgotPassword(email: string, newPassword: string, confirmPassword: string): Observable<any> {
+    const reqParam = {
+      url: 'forgot-password',
+      data: {
+        request: {
+          email: email,
+          new_password: newPassword,
+          confirm_password: confirmPassword
+        },
+      },
+    };
+
+    return this.dataService.post(reqParam);
   }
 }

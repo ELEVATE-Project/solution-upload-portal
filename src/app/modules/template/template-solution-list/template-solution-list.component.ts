@@ -19,10 +19,10 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
 
   // Configuration object for different templates
   templateConfigurations: { [key: string]: string[] } = {
-    'survey': ['Program', 'SolutionName', 'startDate', 'endDate'],
-    'improvementProject': ['Program', 'SolutionName', 'startDate', 'endDate'],
-    'observation without rubrics': ['Program', 'SolutionName', 'startDate', 'endDate'],
-    'observation with rubrics': ['Program', 'SolutionName', 'startDate', 'endDate']
+    'survey': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink'],
+    'improvementProject': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink'],
+    'observation without rubrics': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink'],
+    'observation with rubrics': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink']
   };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -54,72 +54,40 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
   loadSolutions(): void {
     const resourceType = this.getResourceType(this.fileName);
     const extension = this.getExtension(this.fileName);
-    console.log(resourceType, "line no 46");
-    console.log(extension, "line no 47");
   
     this.templateService.getSurveySolutions(resourceType, extension).subscribe(
       (response: any) => {
-        console.log(response, "Line no 60");
-        console.log(resourceType,"line 61");
-        
-        // Check for a successful response
         if (response.status === 200 && response.code === 'Success') {
-          
-          // For 'Survey' template
-          if (this.selectedTemplateType == 'survey') {
-            this.dataSource.data = response.csvPath.map((item: any) => {
-              return {
+          // Determine base URL once
+          const baseurl = this.templateService.getBaseURL();
+  
+          // Map response data into the table structure
+          this.dataSource.data = response.csvPath.map((item: any) => {
+            // Determine `crationtype` based on resourceType
+            let crationtype = '';
+            if (resourceType === 'improvementProject') {
+              crationtype = 'manage-learn/create-project/';
+            } else if (resourceType === 'survey') {
+              crationtype = 'manage-learn/take-survey/';
+            } else if (
+              resourceType === 'observation without rubrics') {
+              crationtype = 'manage-learn/create-observation/';
+            } else if (resourceType === 'observation with rubrics'){
+              crationtype = 'manage-learn/create-observation/';
+            }
+            // Construct deeplink
+            const deeplink = `${baseurl}${crationtype}${item.Link || ''}`;
+            // Return the row object
+            return {
               Program: item.PROGRAM_NAME,
-              solutionName: item.SOLUTION_NAME,
+              SolutionName: item.SOLUTION_NAME,
               startDate: item.START_DATE,
-              endDate: item.END_DATE
-              };
-            });
-            console.log(this.dataSource.data);
-          
-          // For 'Projects Template'
-          } else if (this.selectedTemplateType == 'improvementProject') {
-            console.log(response, "line no 73, in projects");
-            
-            // Corrected return structure
-            this.dataSource.data = response.csvPath.map((item: any) => {
-              return {
-                Program: item.PROGRAM_NAME,
-                SolutionName: item.SOLUTION_NAME,
-                startDate: item.START_DATE,
-                endDate: item.END_DATE
-              };
-            });
-            console.log(this.dataSource.data,"line no 89");
-          }
-          else if (this.selectedTemplateType == 'observation without rubrics') {
-            console.log(response, "line no 73, in projects");
-            
-            // Corrected return structure
-            this.dataSource.data = response.csvPath.map((item: any) => {
-              return {
-                Program: item.PROGRAM_NAME,
-                SolutionName: item.SOLUTION_NAME,
-                startDate: item.START_DATE,
-                endDate: item.END_DATE
-              };
-            });
-            console.log(this.dataSource.data,"line no 89");
-          }
-          else if (this.selectedTemplateType == 'observation with rubrics') {
-            console.log(response, "line no 73, in projects");
-            
-            // Corrected return structure
-            this.dataSource.data = response.csvPath.map((item: any) => {
-              return {
-                Program: item.PROGRAM_NAME,
-                SolutionName: item.SOLUTION_NAME,
-                startDate: item.START_DATE,
-                endDate: item.END_DATE
-              };
-            });
-            console.log(this.dataSource.data,"line no 89");
-          }
+              endDate: item.END_DATE,
+              deeplink: deeplink
+            };
+          });
+  
+          console.log(this.dataSource.data, 'Processed table data');
         } else {
           this.toastr.error('Failed to load solutions');
         }
@@ -131,12 +99,14 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
     );
   }
   
-
-  copyLink(element: any): void {
-    console.log(element,"solutionid")
-    const baseUrl = this.templateService.getEnvironmentUrl(); // Fetch the base URL from the service
-    const deepLink = `${baseUrl}${element || element.observationId}`;
-    navigator.clipboard.writeText(deepLink).then(
+  // Copy Deeplink Method
+  copyLink(deeplink: string): void {
+    if (!deeplink) {
+      this.toastr.error('Deeplink is missing');
+      return;
+    }
+    console.log('Deeplink to copy:', deeplink); // Debugging the deeplink
+    navigator.clipboard.writeText(deeplink).then(
       () => this.toastr.success('Link copied to clipboard!'),
       () => this.toastr.error('Failed to copy link')
     );
