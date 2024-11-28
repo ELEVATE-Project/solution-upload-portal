@@ -9,6 +9,8 @@ import { environment } from '../../../../../src/environments/environment';
 })
 export class TemplateService {
   private baseUrl: string = environment.baseUrl;
+  private stagingURl: string = environment.stagingURl;
+
 
   templateFile: any;
   templateError: any;
@@ -18,6 +20,10 @@ export class TemplateService {
 
   getEnvironmentUrl(): string {
     return this.baseUrl;
+  }
+
+  getDeeplinkUrl(): string {
+    return this.stagingURl;
   }
 
   selectTemplates() {
@@ -101,6 +107,11 @@ export class TemplateService {
     });
   }
 
+  getBaseURL(): string {
+    const stagingURl = this.getDeeplinkUrl();
+    return `${stagingURl}`;  // Directly using the deeplink passed as argument
+  }
+  
   getSolutionLink(solutionId: string): string {
     const baseUrl = this.getEnvironmentUrl();
     return `${baseUrl}surveyml/${solutionId}`;
