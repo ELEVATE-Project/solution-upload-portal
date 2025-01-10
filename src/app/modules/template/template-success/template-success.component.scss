@@ -113,9 +113,41 @@ p {
   text-align: left; /* Align text for table data */
 }
 
+/* Styling for copied message */
 .copied-message {
   color: green;
   font-weight: bold;
   margin-top: 10px;
   text-align: center;
+}
+
+/* Default styling for the solution key-value pairs */
+.solution-pair {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* Styling for invalid values */
+.solution-pair.invalid,
+.solution-table td.invalid {
+  color: red; /* Highlight invalid links in red */
+  font-weight: bold;
+}
+
+/* Add this new class to style invalid solution links or messages */
+.invalid-text {
+  color: red; /* Red color for invalid links or messages */
+  font-weight: bold; /* Bold text to highlight the errors */
+  text-align: center; /* Center the error message */
+  padding: 10px 0; /* Add padding for readability */
+  background-color: #f8d7da; /* Optional: Light background color for errors */
+  border-radius: 5px; /* Optional: Rounded corners for error boxes */
+  margin-top: 10px; /* Space between error messages */
+}
+
+/* Additional styles for spacing */
+.solution-container {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }

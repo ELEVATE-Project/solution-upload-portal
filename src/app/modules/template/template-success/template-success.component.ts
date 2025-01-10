@@ -17,7 +17,7 @@ export class TemplateSuccessComponent implements OnInit {
   wbfile: XLSX.WorkBook | null = null;
   solutionDict: any = {}; // Holds the solution dictionary
   programName: string = ''; // Holds the program name
-  solutionKeyValuePairs: { key: string, value: string }[] = []; // For displaying key-value pairs
+  solutionKeyValuePairs: { key: string, value: string, isInvalid?: boolean }[] = []; // For displaying key-value pairs
   customAuth: any = environment.customAuth;
   isCopied: boolean = false;
 
@@ -30,46 +30,42 @@ export class TemplateSuccessComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to query parameters
-    this.route.queryParams.subscribe(params => {
-      // console.log(params, "Query Params 29");
-
-      const solutionParam = params['solution'];
-      this.solutionDict = solutionParam ? JSON.parse(solutionParam) : {}; // Parse solutionDict from queryParams
-
-      // Check if solutionDict is empty
-      if (Object.keys(this.solutionDict).length === 0) {
+    this.route.queryParams.subscribe(({ solution, program = 'Default Program Name' }) => {
+      this.solutionDict = solution ? JSON.parse(solution) : {};
+      this.programName = program;
+  
+      if (!Object.keys(this.solutionDict).length) {
         console.error('No solution provided in route');
         return;
       }
-
-      // Extract programName from queryParams
-      this.programName = params['program'] || 'Default Program Name'; // Use default if not provided
-
-      // Store key-value pairs from solutionDict for display
+  
+      // Process each solution dictionary entry
       this.solutionKeyValuePairs = Object.entries(this.solutionDict).map(([key, value]) => {
-        return { key, value: String(value) }; // Ensure values are string
+        const stringValue = value ? String(value) : ''; // Ensure value is always a string
+        let displayValue = stringValue;
+        let isInvalid = false; // Flag for invalid values
+  
+        // Check if the solution starts with 'https' (for a valid URL)
+        if (stringValue.startsWith('https')) {
+          // If the link starts with https, keep it as it is
+          displayValue = stringValue;
+        } 
+        // Check if the solution contains 'validation failed'
+        else if (stringValue.includes('validation failed')) {
+          displayValue = 'Template Validation failed for this solution. Please check the Template.';
+          isInvalid = true; // Mark as invalid if validation failed
+        } 
+        // Handle unexpected errors (non-https and no validation failure)
+        else {
+          displayValue = 'We’re unable to complete this request right now. Contact your Administrator for further assistance.';
+          isInvalid = true; // Mark as invalid
+        }
+  
+        // Return the key, updated value, and invalid flag
+        return { key, value: displayValue, isInvalid };
       });
-
-      // Check if the user is logged in
-      this.isUserLogin = this.authService.isUserLoggedIn();
-      if (!this.isUserLogin) {
-        console.error('User is not logged in');
-        this.router.navigate(['/auth/login']);
-        return;
-      }
-
-      // Check if a template file is present in the service
-      if (!this.templateService.templateFile) {
-        console.warn('No template file set, redirecting to template selection');
-        this.router.navigate(['/template/template-selection']);
-        return;
-      }
-
-      // Load the file if it exists
-      this.onFileChange(this.templateService.templateFile);
     });
-  }
+  }    
 
   goBack() {
     this.location.back();
