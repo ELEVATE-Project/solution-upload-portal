@@ -13,7 +13,7 @@ RUN ng build --configuration=production
 FROM node:16.10.0 AS final
 
 WORKDIR /usr/src/app
-COPY --from=build /app/dist/kb-survey/* ./dist/
+COPY --from=build /app/dist/template-validation-portal/* ./dist/
 RUN npm install -g serve
 
 EXPOSE 3111
