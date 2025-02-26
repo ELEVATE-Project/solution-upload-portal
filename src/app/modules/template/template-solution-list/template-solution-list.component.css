@@ -9,7 +9,7 @@ table {
   display: flex;
   align-items: center;
   margin-bottom: 16px;
-  color:rgb(0, 116, 182, 1) !important;
+  color:#A43E27 !important;
 }
 
 h2 {
@@ -25,7 +25,7 @@ h2 {
 }
 
 th{
-  background-color: rgb(0, 116, 182, 1) !important;
+  background-color: #A43E27 !important;
   color: #ffffff;
   font-weight: bold;
 }
