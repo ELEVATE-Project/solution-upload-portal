@@ -23,9 +23,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "baseHref": "/",
-            "deployUrl": "/",
-            "outputPath": "dist/template-validation-portal",
+            "baseHref": "/solution-upload/",
+            "deployUrl": "/solution-upload/",
+            "outputPath": "dist/solution-upload",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
