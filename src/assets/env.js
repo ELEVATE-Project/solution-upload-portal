@@ -1,4 +1,4 @@
-// window["env"] = {
-//   customAuth: true,
-  // baseUrl: 'http://localhost:5000/template/api/v1/' 
-// };
+window["env"] = {
+  customAuth: true,
+  baseUrl: 'https://elevate-api.sunbirdsaas.com/template/api/v1/' 
+};
