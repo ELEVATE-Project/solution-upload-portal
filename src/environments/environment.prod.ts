@@ -1,6 +1,5 @@
 export const environment = {
   production: true,
-  baseUrl: 'http://localhost:5000/template/api/v1/',
-  stagingURl: 'https://qa.elevate-apis.shikshalokam.org/',
-  customAuth: false
-}; 
+  baseUrl:window['env' as any]['baseURL' as any]as unknown as string,
+  customAuth: window['env' as any]['customAuth' as any]as unknown as string
+};
