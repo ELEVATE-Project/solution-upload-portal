@@ -15,6 +15,8 @@ FROM node:16.10.0 AS final
 WORKDIR /usr/src/app
 COPY --from=build /app/dist/solution-upload/* ./dist/
 RUN npm install -g serve
+COPY src/assets/env.js /usr/src/app/dist/assets/env.js
+
 
 EXPOSE 3111
 
