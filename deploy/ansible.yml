@@ -8,12 +8,22 @@
       slurp:
         src: "/opt/backend/deployment/.token"
       register: slurpfile
+
     - name: Run vault credentials
       shell: "curl --location --request GET '{{ vaultAddress }}solution-upload-portal' --header 'X-Vault-Token: {{ slurpfile['content'] | b64decode }}' | jq '.data' > '{{root_path}}/data2.json'"
       register: vaultCurl
 
-    - name: Delete Old Folder & create folder
-      shell: rm -rf {{ project_path }} && mkdir solution-upload-portal && cd solution-upload-portal
+    - name: Delete old project directory
+      file:
+        path: "{{ project_path }}"
+        state: absent
+
+    - name: Recreate project directory
+      file:
+        path: "{{ project_path }}"
+        state: directory
+        mode: '0755'
+        recurse: yes
 
     - name: Fetch the latest code
       git:
@@ -21,10 +31,13 @@
         dest: "{{project_path}}"
         version: "{{gitBranch}}"
         force: yes
+
     - name: Update npm
       shell: cd {{project_path}} && npm i --force
+
     - name: Set permission
       shell: chmod 744 {{ project_path }}/src/scripts/json2env.sh
+      
     - name: Generate .env
       shell: cat {{root_path}}/data2.json | jq '.data' > {{ project_path }}/src/environments/environment.ts && sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/environments/environment.ts
       register: envConfig
