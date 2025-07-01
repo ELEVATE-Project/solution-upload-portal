@@ -37,11 +37,14 @@
 
     - name: Set permission
       shell: chmod 744 {{ project_path }}/src/scripts/json2env.sh
-      
-    - name: Generate .env
-      shell: cat {{root_path}}/data2.json | jq '.data' > {{ project_path }}/src/environments/environment.ts && sed -i '1s/^/export const environment = \n/' {{ project_path }}/src/environments/environment.ts
-      register: envConfig
-    - debug: msg=" cred {{ envConfig }} "
+
+    - name: Generate env.js from Vault JSON
+      shell: |
+        echo 'window["env"] = ' > {{ project_path }}/src/assets/env.js
+        cat {{ root_path }}/data2.json | jq '.data' >> {{ project_path }}/src/assets/env.js
+      args:
+        executable: /bin/bash
+        
     - name: Change directory
       shell: chdir {{project_path}}
     - name: Fetch pm2 config file
