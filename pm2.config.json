@@ -10,7 +10,7 @@
       "merge_logs": true,
       "env": {
         "NODE_ENV": "production",
-        "PORT": 4200
+        "PORT": 4201
       }
     }
   ]
