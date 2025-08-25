@@ -27,7 +27,7 @@
 
     - name: Fetch the latest code
       git:
-        repo: https://github.com/priyanka-TL/solution-upload-portal
+        repo: https://github.com/ELEVATE-Project/solution-upload-portal
         dest: "{{project_path}}"
         version: "{{gitBranch}}"
         force: yes
