@@ -19,10 +19,10 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
 
   // Configuration object for different templates
   templateConfigurations: { [key: string]: string[] } = {
-    'survey': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink'],
-    'improvementProject': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink'],
-    'observation without rubrics': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink'],
-    'observation with rubrics': ['Program', 'SolutionName', 'startDate', 'endDate', 'deeplink']
+    'survey': ['Program', 'SolutionName', 'startDate', 'endDate', 'orgId', 'tenantId','deeplink'],
+    'improvementProject': ['Program', 'SolutionName', 'startDate', 'endDate','orgId', 'tenantId', 'deeplink'],
+    'observation without rubrics': ['Program', 'SolutionName', 'startDate', 'endDate','orgId', 'tenantId', 'deeplink'],
+    'observation with rubrics': ['Program', 'SolutionName', 'startDate', 'endDate','orgId', 'tenantId', 'deeplink']
   };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -83,6 +83,8 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
               SolutionName: item.SOLUTION_NAME,
               startDate: item.START_DATE,
               endDate: item.END_DATE,
+              orgId: item.ORGID,
+              tenantId: item.TENANTID,
               deeplink: deeplink
             };
           });
