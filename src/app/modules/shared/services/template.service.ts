@@ -38,22 +38,32 @@ export class TemplateService {
     formData.append('file', file, file.name);
     const reqParam = {
       url: 'upload',
-      headers: {
-        Authorization: localStorage.getItem('token')
-      },
+      // headers: {
+      //   Authorization: localStorage.getItem('token')
+      // },
       data: formData
     };
     return this.dataService.post(reqParam);
   }
+  
+  getTenantOrgContextWithToken(token: string) {
+  const reqParam = {
+    url: 'user/tenant-org-context',
+    headers: {
+      Authorization: `${token}`
+    }
+  };
+  return this.dataService.get(reqParam);
+}
 
-  surveyCreation(file_path: any) {
+  surveyCreation(file_path: any, tenantId: string, orgId: string) {
     const reqParam = {
       url: 'survey/create',
-      headers: {
-        Authorization: localStorage.getItem('token')
-      },
+      
       data: {
-        file: file_path
+        file: file_path, 
+        tenantId: tenantId, 
+        orgId: orgId
       },
     };
     return this.dataService.post(reqParam);
@@ -64,9 +74,9 @@ export class TemplateService {
       '/opt/backend/template-validation-portal-service/apiServices/src/main/tmp/Program_Template_latest_Final_--_30_12_2021_(6)1671623565-011165.xlsx';
     const reqParam = {
       url: 'errDownload',
-      headers: {
-        Authorization: localStorage.getItem('token')
-      },
+      // headers: {
+      //   Authorization: localStorage.getItem('token')
+      // },
     };
     let queryParams = new HttpParams();
     queryParams = queryParams.append('templatePath', templatePath);
@@ -84,9 +94,9 @@ export class TemplateService {
 
     const reqParam = {
       url: 'validate',
-      headers: {
-        Authorization: localStorage.getItem('token')
-      },
+      // headers: {
+      //   Authorization: localStorage.getItem('token')
+      // },
       data: {
         request: {
           templatePath: templatePath,
@@ -100,9 +110,9 @@ export class TemplateService {
   getSurveySolutions(resourceType: string, extension: string): Observable<any> {
     return this.dataService.post({
       url: `survey/${extension}`,
-      headers: {
-        Authorization: localStorage.getItem('token')
-      },
+      // headers: {
+      //   Authorization: localStorage.getItem('token')
+      // },
       data: { resourceType: resourceType }
     });
   }

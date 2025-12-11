@@ -6,11 +6,6 @@
   border-bottom: 1px solid #ddd;
 }
 
-.portal-header h1 {
-  margin: 0;
-  color: #8b0000;
-}
-
 .portal-header h2 {
   margin: 0;
   color: #A43E27 !important;
@@ -44,17 +39,19 @@
   margin: 40px 0 20px 0;
 }
 
+/* Tenant card layout with left/right padding */
 .tenant-org-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 420px;
-  padding: 25px 30px;
+  padding: 25px 35px !important; /* horizontal padding */
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Title section */
 .tenant-org-title h3 {
   text-align: center;
   color: #A43E27;
@@ -62,12 +59,21 @@
   margin-bottom: 10px;
 }
 
+/* Add horizontal & vertical spacing inside card content */
+.tenant-org-card mat-card-content {
+  padding-left: 25px !important;
+  padding-right: 25px !important;
+  padding-top: 25px !important;
+}
+
+/* Dropdown row spacing */
 .tenant-org-row {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   gap: 15px;
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
@@ -75,134 +81,178 @@
   flex: 1;
 }
 
+/* Center-align SAVE button area */
+.template-row .btn-group {
+  width: 100%;
+  display: flex;
+  justify-content: center !important;
+}
+
+/* Save button */
 .soluction-button {
   background-color: #A43E27 !important;
   color: white;
-  width: 60%;
-  height: 45px;
+  width: 150px;
+  height: 40px;
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .soluction-button:hover {
   background-color: #8b0000 !important;
 }
 
-/* ====================== TEMPLATE DOWNLOAD ====================== */
+/* ====================== TEMPLATE SELECTION SECTION ====================== */
+/* two-column layout, aligned at top, added bottom margin for page breathing */
 .template-selection-container {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
   margin: 50px;
+  align-items: start;
+  margin-bottom: 60px; /* space after last cards */
 }
 
 .tempplate-download-card,
 .tempplate-upload-card {
   padding: 2rem 2rem 2.5rem;
-  margin: 10% auto;
-  width: 75%;
+  margin: 0;
+  width: auto;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-container-download {
   padding-top: 30px;
   display: grid;
-  grid-template-rows: auto auto;
-  row-gap: 35px;
+  row-gap: 20px;
 }
 
-.template-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 80px;
-}
-
-/* Reduce congestion in the Download card */
-.tempplate-download {
-  font-size: large;
-  font-weight: 500;
-  color: #A43E27 !important;
-  text-align: center;
-  margin: 3rem auto 4.5rem;
-}
-
-/* ====================== TEMPLATE UPLOAD ====================== */
 .card-container-upload {
   padding-top: 20px;
   display: grid;
-  grid-template-rows: auto auto auto;
-  row-gap: 15px; /* Reduced gap between dropdown and buttons */
+  row-gap: 15px;
 }
 
+.tempplate-download,
 .tempplate-upload {
   font-size: large;
   font-weight: 500;
   color: #A43E27 !important;
   text-align: center;
-  margin: 3rem auto 4.5rem;
+  margin: 0 0 1.5rem 0;
 }
 
-.template-upload-button-row {
+/* ====================== FORM ROWS ====================== */
+.template-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+/* Spacing between download rows */
+.card-container-download .template-row:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+/* ====================== DOWNLOAD: DROPDOWN + BUTTONS SAME LINE ====================== */
+.download-align {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: nowrap !important;
+}
+
+/* Download buttons */
+.btn-large {
+  width: 140px;
+  height: 42px;
+  background-color: #A43E27 !important;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ====================== UPLOAD CARD ====================== */
+.upload-center {
   display: flex;
   justify-content: center;
-  padding-bottom: 10px;
+  width: 100%;
+}
+
+.upload-dropdown {
+  max-width: 400px !important;
+  width: 100%;
+}
+
+/* Center big upload buttons */
+.upload-buttons-center {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 30px;
+  width: 100%;
+}
+
+/* Big buttons for Validate & Create */
+.btn-xl {
+  width: 150px;
+  height: 48px;
+  background-color: #A43E27 !important;
+  color: white;
+  font-size: 1rem;
+  border-radius: 6px;
+  display: inline-flex;
   align-items: center;
-  gap: 80px; /* Slightly reduced */
+  justify-content: center;
 }
 
 .template-fileName {
   text-align: center;
   color: #444;
   font-size: 0.95rem;
-  margin-top: 50px;
-}
-
-/* ====================== BUTTONS ====================== */
-.upload-button,
-.create-button,
-.download-button,
-.select-button,
-.smaller-button {
-  flex: 1;
-  background-color: #A43E27 !important;
-  color: white;
-  height: 45px;
-  border-radius: 4px;
-  text-align: center;
-  transition: background 0.3s ease;
-}
-
-.upload-button:hover,
-.create-button:hover,
-.download-button:hover,
-.select-button:hover,
-.smaller-button:hover {
-  background-color: #8b0000 !important;
-}
-
-.download-button-small {
-  flex: 1;
-  background-color: #A43E27 !important;
-  color: white;
-  text-align: center;
-  margin-top: -5px;
+  margin-top: 20px;
 }
 
 /* ====================== DROPDOWNS ====================== */
-.dropdown-small {
-  flex: 1;
-  max-width: 350px;
-}
-
+.dropdown-small,
 .dropdown-large {
   flex: 1;
-  max-width: 400px;
+  max-width: 350px;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
 }
 
-/* ====================== SPINNER ====================== */
+.mat-form-field-appearance-outline .mat-form-field-flex {
+  min-height: 40px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.mat-form-field {
+  margin-left: 1px;
+}
+
+/* ====================== LOADER ====================== */
+.loader-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .spinner {
   display: flex;
   flex-direction: column;
@@ -220,13 +270,13 @@
 /* ====================== RESPONSIVE ====================== */
 @media (max-width: 1000px) {
   .template-selection-container {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .tempplate-download-card,
   .tempplate-upload-card {
-    width: 90%;
+    width: 100%;
     margin: 20px auto;
   }
 
@@ -235,21 +285,28 @@
   }
 }
 
-@media screen and (min-width: 1001px) and (max-width: 1250px) {
-  .tempplate-download-card,
-  .tempplate-upload-card {
-    padding: 1.5rem;
-    margin: 5% auto;
+@media (max-width: 520px) {
+  .download-align {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-large,
+  .btn-xl {
+    width: 100%;
+    max-width: 300px;
   }
 }
 
-/* ====================== FORM FIELD OVERRIDES ====================== */
-.mat-form-field {
-  margin-left: 1px;
+/* ====================== SAFETY OVERRIDES ====================== */
+.template-row > * {
+  float: none !important;
 }
 
-.mat-label {
-  color: black;
+.tempplate-download-card,
+.tempplate-upload-card,
+.tenant-org-card {
+  box-sizing: border-box;
 }
 
 /* ====================== TOAST ====================== */

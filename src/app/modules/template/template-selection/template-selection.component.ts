@@ -11,6 +11,26 @@ interface Template {
   templateLink?: string;
 }
 
+interface Tenant {
+  id: string;
+  name: string;
+}
+
+interface Org {
+  id: string;
+  name: string;
+}
+
+interface TenantOrgContextResponse {
+  result: {
+    userRole: 'tenant_admin' | 'org_admin';
+    tenants: Array<Tenant | string>;
+    orgs: Array<Org | string>;
+    selectedTenantId: string;
+    selectedOrgId?: string;
+  };
+}
+
 @Component({
   selector: 'app-template-selection',
   templateUrl: './template-selection.component.html',
@@ -31,21 +51,15 @@ export class TemplateSelectionComponent implements OnInit {
   customAuth: boolean = environment.customAuth;
 
   /** Tenant & Org Selection */
-  userRole: 'super_admin' | 'tenant_admin' | 'org_admin' = 'super_admin';
+  userRole: 'tenant_admin' | 'org_admin' = 'tenant_admin';
   selectedTenant: string = '';
   selectedOrg: string = '';
 
-  tenants = [
-    { id: 'tenant1', name: 'Tenant 1' },
-    { id: 'tenant2', name: 'Tenant 2' },
-    { id: 'tenant3', name: 'Tenant 3' },
-  ];
+  tenants: Tenant[] = [];
+  orgs: Org[] = [];
 
-  orgs = [
-    { id: 'org1', name: 'Org 1' },
-    { id: 'org2', name: 'Org 2' },
-    { id: 'org3', name: 'Org 3' },
-  ];
+  /** To track original/default org from API so we know when it changes */
+  private initialSelectedOrg: string = '';
 
   constructor(
     private templateService: TemplateService,
@@ -58,8 +72,8 @@ export class TemplateSelectionComponent implements OnInit {
     this.isUserLogin = this.authService.isUserLoggedIn();
     this.loadTemplates();
 
-    /** Hardcode roles for testing */
-    this.userRole = 'super_admin';
+    // Load tenant/org context from backend using the token
+    this.loadTenantOrgContext();
   }
 
   /** -------------------------------
@@ -68,9 +82,10 @@ export class TemplateSelectionComponent implements OnInit {
   loadTemplates() {
     this.templateService.selectTemplates().subscribe(
       (resp: any) => {
-        this.templateLinks = resp.result.templateLinks;
-        resp.result.templateLinks.forEach((data: any) => {
-          const templateName = data.templateName.replace(/([A-Z])/g, ' $1').trim();
+        const links = resp?.result?.templateLinks ?? [];
+        this.templateLinks = links;
+        links.forEach((data: any) => {
+          const templateName = (data.templateName || '').replace(/([A-Z])/g, ' $1').trim();
           this.uploadTemplates.push(templateName);
           this.downloadTemplates.push({ name: templateName, templateLink: data.templateLink });
         });
@@ -79,11 +94,79 @@ export class TemplateSelectionComponent implements OnInit {
     );
   }
 
-  onCickSelectedSurveyTemplate(template: Template) {
+  /** -------------------------------
+   * Load Tenant & Org Context
+   * ------------------------------- */
+
+  getUserToken(): string {
+    return localStorage.getItem('accToken') || '';
+  }
+
+  loadTenantOrgContext() {
+    const USER_TOKEN = this.getUserToken();
+
+    if (!USER_TOKEN) {
+      this.toaster.error('User token missing. Please login again.');
+        return;
+      }
+      
+    this.templateService.getTenantOrgContextWithToken(USER_TOKEN).subscribe(
+      (resp: TenantOrgContextResponse) => {
+        const data = resp?.result;
+        if (!data) {
+          this.toaster.error('Invalid tenant/org response');
+          return;
+        }
+
+        this.userRole = data.userRole ?? 'tenant_admin';
+
+        // Normalize tenants
+        this.tenants = (data.tenants || []).map((t) =>
+          typeof t === 'string'
+            ? { id: t, name: t }
+            : {
+                id: (t as any).id?.toString() ?? (t as any).code ?? (t as any).id,
+                name: (t as any).name ?? (t as any).label ?? (t as any).code ?? '',
+              }
+        );
+
+        // Normalize orgs
+        this.orgs = (data.orgs || []).map((o) =>
+          typeof o === 'string'
+            ? { id: o, name: o }
+            : {
+                id: (o as any).id?.toString() ?? (o as any).code ?? (o as any).id,
+                name: (o as any).name ?? (o as any).label ?? (o as any).code ?? '',
+              }
+        );
+
+        // Defaults from API
+        this.selectedTenant = data.selectedTenantId ?? (this.tenants[0]?.id ?? '');
+        this.selectedOrg = data.selectedOrgId ?? (this.orgs[0]?.id ?? '');
+
+        // Store the original org to compare later for enabling/disabling Save button
+        this.initialSelectedOrg = this.selectedOrg;
+
+        console.log('Tenant/Org Context:', {
+          userRole: this.userRole,
+          tenants: this.tenants,
+          orgs: this.orgs,
+          selectedTenant: this.selectedTenant,
+          selectedOrg: this.selectedOrg,
+        });
+      },
+      (error) => {
+        console.error('Error loading tenant/org context:', error);
+        this.toaster.error('Unable to load tenant & organization details');
+      }
+    );
+  }
+
+  onClickSelectedSurveyTemplate(template: Template) {
     this.selectFile = template;
   }
-  
-  onCickSelectedSolutionTemplate(template: Template) {
+
+  onClickSelectedSolutionTemplate(template: Template) {
     this.selectedFile = template;
   }
 
@@ -96,21 +179,47 @@ export class TemplateSelectionComponent implements OnInit {
 
   onOrgChange(selectedOrgId: string) {
     this.selectedOrg = selectedOrgId;
+    // No need to do anything else; isSaveDisabled getter will react automatically
+  }
+
+  /** Computed flag for Save button disable state */
+  get isSaveDisabled(): boolean {
+    // org_admin: Save should always be disabled
+    if (this.userRole === 'org_admin') {
+      return true;
+    }
+
+    // For tenant_admin:
+    // - If only one org -> nothing to change -> disabled
+    if (this.orgs.length <= 1) {
+      return true;
+    }
+
+    // - Enable only when current selectedOrg differs from default org from API
+    return this.selectedOrg === this.initialSelectedOrg;
   }
 
   onSaveTenantOrgSelection() {
-    if (this.userRole === 'super_admin' && !this.selectedTenant) {
-      this.toaster.warning('Please select a tenant');
+    // org_admin should not save anything (also protected by isSaveDisabled)
+    if (this.userRole === 'org_admin') {
+      this.toaster.warning('You are not allowed to change tenant or organization');
       return;
     }
 
-    if ((this.userRole === 'super_admin' || this.userRole === 'tenant_admin') && !this.selectedOrg) {
+    if (this.userRole === 'tenant_admin' && !this.selectedOrg) {
       this.toaster.warning('Please select an organization');
       return;
     }
 
-    this.toaster.success('Tenant & Org selection saved successfully!');
-    console.log('Tenant & Org saved:', { tenant: this.selectedTenant, org: this.selectedOrg, role: this.userRole });
+    this.toaster.success('Org selection saved successfully!');
+    console.log('Org saved:', {
+      tenant: this.selectedTenant,
+      org: this.selectedOrg,
+      role: this.userRole,
+    });
+
+    // After saving, treat the current org as the new "default"
+    this.initialSelectedOrg = this.selectedOrg;
   }
 
   /** -------------------------------
@@ -122,9 +231,10 @@ export class TemplateSelectionComponent implements OnInit {
       return;
     }
     const url = this.selectFile.templateLink;
-    const capturedId = url.match(/\/d\/(.+)\//);
-    if (capturedId && capturedId[1]) {
-      window.open(`https://docs.google.com/spreadsheets/d/${capturedId[1]}/export?format=xlsx`);
+    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const id = match?.[1];
+    if (id) {
+      window.open(`https://docs.google.com/spreadsheets/d/${id}/export?format=xlsx`);
       this.toaster.success('Downloaded successfully');
     } else {
       this.toaster.error('Invalid template link');
@@ -136,14 +246,23 @@ export class TemplateSelectionComponent implements OnInit {
    * ------------------------------- */
   fileUpload(fileInput: HTMLInputElement, userUploadedFileType: string) {
     this.userUploadedFileType = userUploadedFileType;
-    fileInput.click();
+    if (fileInput) {
+      fileInput.click();
+    } else {
+      this.toaster.error('File input not available');
+    }
   }
 
-  getFileDetails(event: any) {
-    const file = event.target.files[0];
+  getFileDetails(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input?.files?.[0] ?? null;
     if (file) {
       this.userSelectedFile = file;
+      this.templateService.templateFile = file;
       this.fileName = file.name;
+    } else {
+      this.userSelectedFile = null;
+      this.fileName = '';
     }
   }
 
@@ -172,7 +291,7 @@ export class TemplateSelectionComponent implements OnInit {
       },
       () => {
         this.loader = false;
-        this.toaster.error('Error uploading file');
+        this.toaster.error('Error uploading file1');
       }
     );
   }
@@ -180,6 +299,14 @@ export class TemplateSelectionComponent implements OnInit {
   validateAndCreateSurvey() {
     if (!this.userSelectedFile) {
       this.toaster.error('No file selected');
+      return;
+    }
+    if (!this.selectedTenant) {
+      this.toaster.error('Tenant is not selected');
+      return;
+    }
+    if (!this.selectedOrg) {
+      this.toaster.error('Organization is not selected');
       return;
     }
     this.loader = true;
@@ -193,7 +320,7 @@ export class TemplateSelectionComponent implements OnInit {
             (validationResp: any) => {
               const errors = validationResp.result;
               if (errors.basicErrors?.data.length === 0 && errors.advancedErrors?.data.length === 0) {
-                this.templateService.surveyCreation(uploadResp.result.templatePath).subscribe(
+                this.templateService.surveyCreation(uploadResp.result.templatePath, this.selectedTenant, this.selectedOrg).subscribe(
                   (surveyResp: any) => {
                     const solutionDict = surveyResp.result.solutionId.solutionDict;
                     const programName = surveyResp.result.solutionId.programName;
@@ -226,7 +353,7 @@ export class TemplateSelectionComponent implements OnInit {
       },
       () => {
         this.loader = false;
-        this.toaster.error('Error uploading file');
+        this.toaster.error('Error uploading file2');
       }
     );
   }
