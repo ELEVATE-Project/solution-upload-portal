@@ -56,14 +56,16 @@ export class TemplateService {
   return this.dataService.get(reqParam);
 }
 
-  surveyCreation(file_path: any, tenantId: string, orgId: string) {
+  surveyCreation(file_path: any, tenantId: string, orgId: string, USER_TOKEN: string, userRole: string) {
     const reqParam = {
       url: 'survey/create',
       
       data: {
         file: file_path, 
         tenantId: tenantId, 
-        orgId: orgId
+        orgId: orgId,
+        USER_TOKEN: USER_TOKEN,
+        userRole : userRole
       },
     };
     return this.dataService.post(reqParam);
