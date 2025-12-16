@@ -99,6 +99,7 @@ export class TemplateSelectionComponent implements OnInit {
    * ------------------------------- */
 
   getUserToken(): string {
+    // return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo0NTYsIm5hbWUiOiJQcmVldGkiLCJzZXNzaW9uX2lkIjozNzI5NSwib3JnYW5pemF0aW9uX2lkcyI6WyIzMSJdLCJvcmdhbml6YXRpb25fY29kZXMiOlsic2xvcmciXSwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJvcmdhbml6YXRpb25zIjpbeyJpZCI6MzEsIm5hbWUiOiJTaGlrc2hhbG9rYW0gT3JnIiwiY29kZSI6InNsb3JnIiwiZGVzY3JpcHRpb24iOiJFbmFibGluZyBhbmQgYW1wbGlmeWluZyBsZWFkZXJzaGlwIGRldmVsb3BtZW50IG9wcG9ydHVuaXRpZXMgZm9yIGluZGl2aWR1YWxzIGFuZCBpbnN0aXR1dGlvbnMiLCJzdGF0dXMiOiJBQ1RJVkUiLCJyZWxhdGVkX29yZ3MiOltdLCJ0ZW5hbnRfY29kZSI6InNoaWtzaGFsb2thbSIsIm1ldGEiOm51bGwsImNyZWF0ZWRfYnkiOjEsInVwZGF0ZWRfYnkiOjM3Nywicm9sZXMiOlt7ImlkIjoyMCwidGl0bGUiOiJvcmdfYWRtaW4iLCJsYWJlbCI6Im9yZ19hZG1pbiIsInVzZXJfdHlwZSI6MSwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfSx7ImlkIjoyMywidGl0bGUiOiJtZW50ZWUiLCJsYWJlbCI6Im1lbnRlZSIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfV19XX0sImlhdCI6MTc2NTc3NjA2MSwiZXhwIjoxNzcwOTYwMDYxfQ.NsEUMUejLw2QXTWgDNdDrDTKvQRSgQqP_R8qUm3lKuA';
     return localStorage.getItem('accToken') || '';
   }
 
@@ -320,7 +321,7 @@ export class TemplateSelectionComponent implements OnInit {
             (validationResp: any) => {
               const errors = validationResp.result;
               if (errors.basicErrors?.data.length === 0 && errors.advancedErrors?.data.length === 0) {
-                this.templateService.surveyCreation(uploadResp.result.templatePath, this.selectedTenant, this.selectedOrg).subscribe(
+                this.templateService.surveyCreation(uploadResp.result.templatePath, this.selectedTenant, this.selectedOrg, this.getUserToken(), this.userRole).subscribe(
                   (surveyResp: any) => {
                     const solutionDict = surveyResp.result.solutionId.solutionDict;
                     const programName = surveyResp.result.solutionId.programName;
