@@ -109,13 +109,13 @@ export class TemplateService {
     return this.dataService.post(reqParam);
   }
 
-  getSurveySolutions(resourceType: string, extension: string): Observable<any> {
+  getSurveySolutions(resourceType: string, extension: string, selectedOrgId: string, selectedTenantId: string): Observable<any> {
     return this.dataService.post({
       url: `survey/${extension}`,
       // headers: {
       //   Authorization: localStorage.getItem('token')
       // },
-      data: { resourceType: resourceType }
+      data: { resourceType: resourceType , selectedOrgId: selectedOrgId, selectedTenantId: selectedTenantId }
     });
   }
 

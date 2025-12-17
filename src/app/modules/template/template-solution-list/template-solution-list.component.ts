@@ -11,11 +11,15 @@ import { Location } from '@angular/common';
   templateUrl: './template-solution-list.component.html',
   styleUrls: ['./template-solution-list.component.css']
 })
+
 export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<any>([]);
   selectedTemplateType: string = '';
   fileName: any = ""
+  selectedOrg: string | null = null;
+  selectedTenant: string | null = null;
+
 
   // Configuration object for different templates
   templateConfigurations: { [key: string]: string[] } = {
@@ -39,7 +43,9 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
     this.route.queryParams
       .subscribe(params => {
         this.fileName = params['fileName'];
-        console.log(this.fileName,"line no 40")
+        this.selectedOrg = params['selectedOrg'];
+        this.selectedTenant = params['selectedTenant'];
+        console.log(this.fileName,this.selectedOrg,this.selectedTenant,"line no 40")
       });
     this.selectedTemplateType = this.getTemplateType(this.fileName);
     this.displayedColumns = this.templateConfigurations[this.selectedTemplateType] || [];
@@ -51,56 +57,150 @@ export class TemplateSolutionListComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  downloadSolutions(): void {
+    if (!this.dataSource || this.dataSource.filteredData.length === 0) {
+      this.toastr.error('No data available to download');
+      return;
+    }
+
+    const dataToExport = this.dataSource.filteredData;
+
+    // Use displayed columns but exclude deeplink action column
+    const columnsToExport = this.displayedColumns.filter(
+      col => col !== 'deeplink'
+    );
+
+    // Build CSV header
+    const header = columnsToExport.join(',');
+
+    // Build CSV rows
+    const rows = dataToExport.map(row =>
+      columnsToExport
+        .map(col => {
+          const value = row[col] ?? '';
+          // Escape commas & quotes
+          return `"${String(value).replace(/"/g, '""')}"`;
+        })
+        .join(',')
+    );
+
+    const csvContent = [header, ...rows].join('\n');
+
+    // Create blob
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+
+    // File name
+    const fileName = `${this.selectedTemplateType}_solutions_${new Date()
+      .toISOString()
+      .slice(0, 10)}.csv`;
+
+    // Trigger download
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    this.toastr.success('Solutions downloaded successfully');
+  }
+
+
+  // loadSolutions(): void {
+  //   const resourceType = this.getResourceType(this.fileName);
+  //   const extension = this.getExtension(this.fileName);
+  
+  //   this.templateService.getSurveySolutions(resourceType, extension, this.selectedOrg, this.selectedTenant).subscribe(
+  //     (response: any) => {
+  //       if (response.status === 200 && response.code === 'Success') {
+  //         // Determine base URL once
+  //         const baseurl = this.templateService.getBaseURL();
+  
+  //         // Map response data into the table structure
+  //         this.dataSource.data = response.csvPath.map((item: any) => {
+  //           // Determine `crationtype` based on resourceType
+  //           let crationtype = '';
+  //           if (resourceType === 'improvementProject') {
+  //             crationtype = 'manage-learn/create-project/';
+  //           } else if (resourceType === 'survey') {
+  //             crationtype = 'manage-learn/take-survey/';
+  //           } else if (
+  //             resourceType === 'observation without rubrics') {
+  //             crationtype = 'manage-learn/create-observation/';
+  //           } else if (resourceType === 'observation with rubrics'){
+  //             crationtype = 'manage-learn/create-observation/';
+  //           }
+  //           // Construct deeplink
+  //           const deeplink = `${baseurl}${crationtype}${item.Link || ''}`;
+  //           // Return the row object
+  //           return {
+  //             Program: item.PROGRAM_NAME,
+  //             SolutionName: item.SOLUTION_NAME,
+  //             startDate: item.START_DATE,
+  //             endDate: item.END_DATE,
+  //             orgId: item.ORGID,
+  //             tenantId: item.TENANTID,
+  //             deeplink: deeplink
+  //           };
+  //         });
+  
+  //         console.log(this.dataSource.data, 'Processed table data');
+  //       } else {
+  //         this.toastr.error('Failed to load solutions');
+  //       }
+  //     },
+  //     (error: any) => {
+  //       console.error('Error fetching solutions:', error);
+  //       this.toastr.error('An error occurred while fetching solutions');
+  //     }
+  //   );
+  // }
   loadSolutions(): void {
     const resourceType = this.getResourceType(this.fileName);
     const extension = this.getExtension(this.fileName);
-  
-    this.templateService.getSurveySolutions(resourceType, extension).subscribe(
-      (response: any) => {
-        if (response.status === 200 && response.code === 'Success') {
-          // Determine base URL once
-          const baseurl = this.templateService.getBaseURL();
-  
-          // Map response data into the table structure
-          this.dataSource.data = response.csvPath.map((item: any) => {
-            // Determine `crationtype` based on resourceType
-            let crationtype = '';
-            if (resourceType === 'improvementProject') {
-              crationtype = 'manage-learn/create-project/';
-            } else if (resourceType === 'survey') {
-              crationtype = 'manage-learn/take-survey/';
-            } else if (
-              resourceType === 'observation without rubrics') {
-              crationtype = 'manage-learn/create-observation/';
-            } else if (resourceType === 'observation with rubrics'){
-              crationtype = 'manage-learn/create-observation/';
-            }
-            // Construct deeplink
-            const deeplink = `${baseurl}${crationtype}${item.Link || ''}`;
-            // Return the row object
-            return {
-              Program: item.PROGRAM_NAME,
-              SolutionName: item.SOLUTION_NAME,
-              startDate: item.START_DATE,
-              endDate: item.END_DATE,
-              orgId: item.ORGID,
-              tenantId: item.TENANTID,
-              deeplink: deeplink
-            };
-          });
-  
-          console.log(this.dataSource.data, 'Processed table data');
-        } else {
-          this.toastr.error('Failed to load solutions');
-        }
-      },
-      (error: any) => {
-        console.error('Error fetching solutions:', error);
-        this.toastr.error('An error occurred while fetching solutions');
-      }
-    );
+
+    const orgId = this.selectedOrg ?? '';
+    const tenantId = this.selectedTenant ?? '';
+
+    this.templateService
+      .getSurveySolutions(resourceType, extension, orgId, tenantId)
+      .subscribe(
+        (response: any) => {
+          if (response.status === 200 && response.code === 'Success') {
+            const baseurl = this.templateService.getBaseURL();
+
+            this.dataSource.data = response.csvPath.map((item: any) => {
+              let crationtype = '';
+
+              if (resourceType === 'improvementProject') {
+                crationtype = 'manage-learn/create-project/';
+              } else if (resourceType === 'survey') {
+                crationtype = 'manage-learn/take-survey/';
+              } else {
+                crationtype = 'manage-learn/create-observation/';
+              }
+
+              return {
+                Program: item.PROGRAM_NAME,
+                SolutionName: item.SOLUTION_NAME,
+                startDate: item.START_DATE,
+                endDate: item.END_DATE,
+                orgId: item.ORGID,
+                tenantId: item.TENANTID,
+                deeplink: `${baseurl}${crationtype}${item.Link || ''}`
+              };
+            });
+          } else {
+            this.toastr.error('Failed to load solutions');
+          }
+        },
+        () => this.toastr.error('An error occurred while fetching solutions')
+      );
   }
-  
+
   // Copy Deeplink Method
   copyLink(deeplink: string): void {
     if (!deeplink) {

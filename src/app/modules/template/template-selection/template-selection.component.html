@@ -16,8 +16,18 @@
     <h2>Solution Upload Portal</h2>
   </div>
 
+  <!-- Loader -->
+  <div class="loader-container">
+    <div *ngIf="loader" class="spinner">
+      <mat-spinner [diameter]="70"></mat-spinner>
+      <p class="loader-text">
+        Template validation is in progress, please wait...
+      </p>
+    </div>
+  </div>
+
   <!-- Tenant & Org Selection -->
-  <div class="tenant-org-container">
+  <div class="tenant-org-container" *ngIf="!loader">
     <mat-card class="tenant-org-card mat-elevation-z8">
       <div class="tenant-org-title">
         <h3>Tenant & Org Selection</h3>
@@ -29,10 +39,10 @@
           <mat-form-field appearance="outline" class="tenant-dropdown">
             <mat-label>Select Tenant</mat-label>
 
-            <!--
-              - tenant_admin: tenant dropdown disabled
-              - org_admin: tenant dropdown disabled
-            -->
+              <!--
+                - tenant_admin: tenant dropdown disabled
+                - org_admin: tenant dropdown disabled
+              -->
             <mat-select
               [(ngModel)]="selectedTenant"
               name="tenantSelect"
@@ -48,10 +58,10 @@
           <mat-form-field appearance="outline" class="org-dropdown">
             <mat-label>Select Org</mat-label>
 
-            <!--
-              - tenant_admin: org enabled only if there are multiple orgs
-              - org_admin: org disabled
-            -->
+              <!--
+                - tenant_admin: org enabled only if there are multiple orgs
+                - org_admin: org disabled
+              -->
             <mat-select
               [(ngModel)]="selectedOrg"
               name="orgSelect"
@@ -80,15 +90,6 @@
       </mat-card-content>
     </mat-card>
   </div>
-
-  <!-- Loader -->
-  <div class="loader-container">
-    <div *ngIf="loader" class="spinner">
-      <mat-spinner [diameter]="70"></mat-spinner>
-      <p>{{ loadingMessage }}</p>
-    </div>
-  </div>
-
   <!-- Main Template Section -->
   <div class="template-selection-container" *ngIf="!loader">
     <!-- Template Download Card -->
@@ -127,9 +128,9 @@
               </mat-select>
             </mat-form-field>
 
-            <button (click)="handleSurveySolutions('download', selectedFile)" mat-raised-button class="btn-large">
+            <!-- <button (click)="handleSurveySolutions('download', selectedFile)" mat-raised-button class="btn-large">
               Download
-            </button>
+            </button> -->
 
             <button (click)="handleSurveySolutions('view', selectedFile)" mat-raised-button class="btn-large">
               View

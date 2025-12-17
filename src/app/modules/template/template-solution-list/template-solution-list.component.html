@@ -9,7 +9,17 @@
     <mat-label>Search</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Search solutions">
   </mat-form-field>
+  <button
+    mat-raised-button
+    class="download-btn download-btn-red"
+    (click)="downloadSolutions()"
+    [disabled]="!dataSource || dataSource.data.length === 0"
+  >
+    <mat-icon>download</mat-icon>
+    Download
+  </button>
 </div>
+
 <!-- Survey Template Table -->
 <ng-container *ngIf="selectedTemplateType === 'survey'">
   <table mat-table [dataSource]="dataSource" matSort>

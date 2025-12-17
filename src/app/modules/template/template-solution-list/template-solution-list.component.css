@@ -61,3 +61,16 @@ mat-paginator {
   background-color: #fafafa;
   border-top: 1px solid #e0e0e0;
 }
+.download-btn-red {
+  background-color: #A43E27;   /* Material Red 700 */
+  color: #fff;
+}
+
+.download-btn-red:hover {
+  background-color: #A43E27;
+}
+
+.download-btn-red:disabled {
+  background-color: #e0e0e0;
+  color: #9e9e9e;
+}

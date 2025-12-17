@@ -99,8 +99,8 @@ export class TemplateSelectionComponent implements OnInit {
    * ------------------------------- */
 
   getUserToken(): string {
-    // return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo0NTYsIm5hbWUiOiJQcmVldGkiLCJzZXNzaW9uX2lkIjozNzI5NSwib3JnYW5pemF0aW9uX2lkcyI6WyIzMSJdLCJvcmdhbml6YXRpb25fY29kZXMiOlsic2xvcmciXSwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJvcmdhbml6YXRpb25zIjpbeyJpZCI6MzEsIm5hbWUiOiJTaGlrc2hhbG9rYW0gT3JnIiwiY29kZSI6InNsb3JnIiwiZGVzY3JpcHRpb24iOiJFbmFibGluZyBhbmQgYW1wbGlmeWluZyBsZWFkZXJzaGlwIGRldmVsb3BtZW50IG9wcG9ydHVuaXRpZXMgZm9yIGluZGl2aWR1YWxzIGFuZCBpbnN0aXR1dGlvbnMiLCJzdGF0dXMiOiJBQ1RJVkUiLCJyZWxhdGVkX29yZ3MiOltdLCJ0ZW5hbnRfY29kZSI6InNoaWtzaGFsb2thbSIsIm1ldGEiOm51bGwsImNyZWF0ZWRfYnkiOjEsInVwZGF0ZWRfYnkiOjM3Nywicm9sZXMiOlt7ImlkIjoyMCwidGl0bGUiOiJvcmdfYWRtaW4iLCJsYWJlbCI6Im9yZ19hZG1pbiIsInVzZXJfdHlwZSI6MSwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfSx7ImlkIjoyMywidGl0bGUiOiJtZW50ZWUiLCJsYWJlbCI6Im1lbnRlZSIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfV19XX0sImlhdCI6MTc2NTc3NjA2MSwiZXhwIjoxNzcwOTYwMDYxfQ.NsEUMUejLw2QXTWgDNdDrDTKvQRSgQqP_R8qUm3lKuA';
-    return localStorage.getItem('accToken') || '';
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoyMzQ3LCJuYW1lIjoic2xtYnByb2dyYW1tYW5hZ2VyZGhhbGFpIiwic2Vzc2lvbl9pZCI6MjgwNTMsIm9yZ2FuaXphdGlvbl9pZHMiOlsiMzQiXSwib3JnYW5pemF0aW9uX2NvZGVzIjpbInNvdCJdLCJ0ZW5hbnRfY29kZSI6InNoaWtzaGFsb2thbSIsIm9yZ2FuaXphdGlvbnMiOlt7ImlkIjozNCwibmFtZSI6IlNvVCIsImNvZGUiOiJzb3QiLCJkZXNjcmlwdGlvbiI6IlN0ZXAtb24tVGVjaCIsInN0YXR1cyI6IkFDVElWRSIsInJlbGF0ZWRfb3JncyI6WzMzXSwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJtZXRhIjpudWxsLCJjcmVhdGVkX2J5IjoxLCJ1cGRhdGVkX2J5IjoxNzA5LCJyb2xlcyI6W3siaWQiOjIzLCJ0aXRsZSI6Im1lbnRlZSIsImxhYmVsIjoibWVudGVlIiwidXNlcl90eXBlIjowLCJzdGF0dXMiOiJBQ1RJVkUiLCJvcmdhbml6YXRpb25faWQiOjEwLCJ2aXNpYmlsaXR5IjoiUFVCTElDIiwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJ0cmFuc2xhdGlvbnMiOm51bGx9LHsiaWQiOjQ1LCJ0aXRsZSI6InByb2dyYW1fbWFuYWdlciIsImxhYmVsIjoiUHJvZ3JhbSBNYW5hZ2VyIiwidXNlcl90eXBlIjowLCJzdGF0dXMiOiJBQ1RJVkUiLCJvcmdhbml6YXRpb25faWQiOjEwLCJ2aXNpYmlsaXR5IjoiUFVCTElDIiwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJ0cmFuc2xhdGlvbnMiOm51bGx9LHsiaWQiOjQ2LCJ0aXRsZSI6InByb2dyYW1fZGVzaWduZXIiLCJsYWJlbCI6IlByb2dyYW0gRGVzaWduZXIiLCJ1c2VyX3R5cGUiOjAsInN0YXR1cyI6IkFDVElWRSIsIm9yZ2FuaXphdGlvbl9pZCI6MTAsInZpc2liaWxpdHkiOiJQVUJMSUMiLCJ0ZW5hbnRfY29kZSI6InNoaWtzaGFsb2thbSIsInRyYW5zbGF0aW9ucyI6bnVsbH0seyJpZCI6MTk1LCJ0aXRsZSI6InRlbmFudF9hZG1pbiIsImxhYmVsIjoiVGVuYW50IEFkbWluIiwidXNlcl90eXBlIjoxLCJzdGF0dXMiOiJBQ1RJVkUiLCJvcmdhbml6YXRpb25faWQiOjEwLCJ2aXNpYmlsaXR5IjoiUFVCTElDIiwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJ0cmFuc2xhdGlvbnMiOm51bGx9XX1dfSwiaWF0IjoxNzY1OTU1MTg1LCJleHAiOjE3NjYwNDE1ODV9.afaLa_iicfWlCLVEYxaqMYVEdjFFwu-Mz9uCvs9kEAk';
+    // return localStorage.getItem('accToken') || '';
   }
 
   loadTenantOrgContext() {
@@ -389,8 +389,8 @@ export class TemplateSelectionComponent implements OnInit {
 
     const obs$: Observable<any> =
       action === 'download'
-        ? this.templateService.getSurveySolutions(type, 'downloadSolutions')
-        : this.templateService.getSurveySolutions(type, 'getSolutions');
+        ? this.templateService.getSurveySolutions(type, 'downloadSolutions', this.selectedOrg, this.selectedTenant)
+        : this.templateService.getSurveySolutions(type, 'getSolutions', this.selectedOrg, this.selectedTenant);
 
     obs$.subscribe(
       (resp: any) => {
@@ -401,7 +401,7 @@ export class TemplateSelectionComponent implements OnInit {
           link.click();
           this.toaster.success('Downloaded successfully');
         } else if (action === 'view') {
-          this.router.navigate(['/template/template-solution-list'], { queryParams: { fileName: type } });
+          this.router.navigate(['/template/template-solution-list'], { queryParams: { fileName: type, selectedOrg: this.selectedOrg, selectedTenant: this.selectedTenant } });
         }
         this.loader = false;
       },
