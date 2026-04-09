@@ -109,7 +109,6 @@ export class TemplateSelectionComponent implements OnInit {
     if (!USER_TOKEN || this.isTokenExpired(USER_TOKEN)) {
       this.toaster.error('Session expired. Please login again.');
       this.authService.logoutAccount();
-      this.router.navigate(['/auth/login']);
       return;
     }
       
