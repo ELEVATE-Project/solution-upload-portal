@@ -17,7 +17,7 @@
   </div>
 
   <!-- Tenant & Org Selection -->
-  <div class="tenant-org-container">
+  <div class="tenant-org-container" *ngIf="!loader">
     <mat-card class="tenant-org-card mat-elevation-z8">
       <div class="tenant-org-title">
         <h3>Tenant & Org Selection</h3>
