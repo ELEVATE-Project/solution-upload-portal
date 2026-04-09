@@ -99,17 +99,19 @@ export class TemplateSelectionComponent implements OnInit {
    * ------------------------------- */
 
   getUserToken(): string {
-    // return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo0NTYsIm5hbWUiOiJQcmVldGkiLCJzZXNzaW9uX2lkIjozNzI5NSwib3JnYW5pemF0aW9uX2lkcyI6WyIzMSJdLCJvcmdhbml6YXRpb25fY29kZXMiOlsic2xvcmciXSwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJvcmdhbml6YXRpb25zIjpbeyJpZCI6MzEsIm5hbWUiOiJTaGlrc2hhbG9rYW0gT3JnIiwiY29kZSI6InNsb3JnIiwiZGVzY3JpcHRpb24iOiJFbmFibGluZyBhbmQgYW1wbGlmeWluZyBsZWFkZXJzaGlwIGRldmVsb3BtZW50IG9wcG9ydHVuaXRpZXMgZm9yIGluZGl2aWR1YWxzIGFuZCBpbnN0aXR1dGlvbnMiLCJzdGF0dXMiOiJBQ1RJVkUiLCJyZWxhdGVkX29yZ3MiOltdLCJ0ZW5hbnRfY29kZSI6InNoaWtzaGFsb2thbSIsIm1ldGEiOm51bGwsImNyZWF0ZWRfYnkiOjEsInVwZGF0ZWRfYnkiOjM3Nywicm9sZXMiOlt7ImlkIjoyMCwidGl0bGUiOiJvcmdfYWRtaW4iLCJsYWJlbCI6Im9yZ19hZG1pbiIsInVzZXJfdHlwZSI6MSwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfSx7ImlkIjoyMywidGl0bGUiOiJtZW50ZWUiLCJsYWJlbCI6Im1lbnRlZSIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfV19XX0sImlhdCI6MTc2NTc3NjA2MSwiZXhwIjoxNzcwOTYwMDYxfQ.NsEUMUejLw2QXTWgDNdDrDTKvQRSgQqP_R8qUm3lKuA';
+    // return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoyMzQ3LCJuYW1lIjoic2xtYnByb2dyYW1tYW5hZ2VyZGhhbGFpIiwic2Vzc2lvbl9pZCI6MzQ4NzIsIm9yZ2FuaXphdGlvbl9pZHMiOlsiMzQiXSwib3JnYW5pemF0aW9uX2NvZGVzIjpbInNvdCJdLCJ0ZW5hbnRfY29kZSI6InNoaWtzaGFsb2thbSIsIm9yZ2FuaXphdGlvbnMiOlt7ImlkIjozNCwibmFtZSI6IlNvVCIsImNvZGUiOiJzb3QiLCJkZXNjcmlwdGlvbiI6IlN0ZXAtb24tVGVjaCIsInN0YXR1cyI6IkFDVElWRSIsInJlbGF0ZWRfb3JncyI6W10sInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwibWV0YSI6bnVsbCwiY3JlYXRlZF9ieSI6MSwidXBkYXRlZF9ieSI6MTcwOSwicm9sZXMiOlt7ImlkIjoyMywidGl0bGUiOiJtZW50ZWUiLCJsYWJlbCI6Im1lbnRlZSIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfSx7ImlkIjo0NSwidGl0bGUiOiJwcm9ncmFtX21hbmFnZXIiLCJsYWJlbCI6IlByb2dyYW0gTWFuYWdlciIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfSx7ImlkIjo0NiwidGl0bGUiOiJwcm9ncmFtX2Rlc2lnbmVyIiwibGFiZWwiOiJQcm9ncmFtIERlc2lnbmVyIiwidXNlcl90eXBlIjowLCJzdGF0dXMiOiJBQ1RJVkUiLCJvcmdhbml6YXRpb25faWQiOjEwLCJ2aXNpYmlsaXR5IjoiUFVCTElDIiwidGVuYW50X2NvZGUiOiJzaGlrc2hhbG9rYW0iLCJ0cmFuc2xhdGlvbnMiOm51bGx9LHsiaWQiOjE5NSwidGl0bGUiOiJ0ZW5hbnRfYWRtaW4iLCJsYWJlbCI6IlRlbmFudCBBZG1pbiIsInVzZXJfdHlwZSI6MSwic3RhdHVzIjoiQUNUSVZFIiwib3JnYW5pemF0aW9uX2lkIjoxMCwidmlzaWJpbGl0eSI6IlBVQkxJQyIsInRlbmFudF9jb2RlIjoic2hpa3NoYWxva2FtIiwidHJhbnNsYXRpb25zIjpudWxsfV19XX0sImlhdCI6MTc3NTcyNTM1MSwiZXhwIjoxNzc1ODExNzUxfQ.hWCIatFR-TWJy9wPtAnjfge8TwLDkbfQNk68ZObP1v0';
     return localStorage.getItem('accToken') || '';
   }
 
   loadTenantOrgContext() {
     const USER_TOKEN = this.getUserToken();
 
-    if (!USER_TOKEN) {
-      this.toaster.error('User token missing. Please login again.');
-        return;
-      }
+    if (!USER_TOKEN || this.isTokenExpired(USER_TOKEN)) {
+      this.toaster.error('Session expired. Please login again.');
+      this.authService.logoutAccount();
+      this.router.navigate(['/auth/login']);
+      return;
+    }
       
     this.templateService.getTenantOrgContextWithToken(USER_TOKEN).subscribe(
       (resp: TenantOrgContextResponse) => {
@@ -142,8 +144,20 @@ export class TemplateSelectionComponent implements OnInit {
         );
 
         // Defaults from API
-        this.selectedTenant = data.selectedTenantId ?? (this.tenants[0]?.id ?? '');
-        this.selectedOrg = data.selectedOrgId ?? (this.orgs[0]?.id ?? '');
+        const savedTenant = localStorage.getItem('selectedTenant');
+        const savedOrg = localStorage.getItem('selectedOrg');
+
+        this.selectedTenant =
+          savedTenant ??
+          data.selectedTenantId ??
+          this.tenants[0]?.id ??
+          '';
+
+        this.selectedOrg =
+          savedOrg ??
+          data.selectedOrgId ??
+          this.orgs[0]?.id ??
+          '';
 
         // Store the original org to compare later for enabling/disabling Save button
         this.initialSelectedOrg = this.selectedOrg;
@@ -180,6 +194,7 @@ export class TemplateSelectionComponent implements OnInit {
 
   onOrgChange(selectedOrgId: string) {
     this.selectedOrg = selectedOrgId;
+    localStorage.setItem('selectedOrg', selectedOrgId);
     // No need to do anything else; isSaveDisabled getter will react automatically
   }
 
@@ -212,6 +227,9 @@ export class TemplateSelectionComponent implements OnInit {
       return;
     }
 
+    localStorage.setItem('selectedTenant', this.selectedTenant);
+    localStorage.setItem('selectedOrg', this.selectedOrg);
+
     this.toaster.success('Org selection saved successfully!');
     console.log('Org saved:', {
       tenant: this.selectedTenant,
@@ -221,6 +239,21 @@ export class TemplateSelectionComponent implements OnInit {
 
     // After saving, treat the current org as the new "default"
     this.initialSelectedOrg = this.selectedOrg;
+  }
+
+  isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp;
+
+      if (!expiry) return true;
+
+      const now = Math.floor(Date.now() / 1000);
+      console.log('Token expiry check:', { now, expiry, expired: now > expiry });
+      return now > expiry;
+    } catch (e) {
+      return true;
+    }
   }
 
   /** -------------------------------
