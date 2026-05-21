@@ -23,8 +23,8 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "baseHref": "/templates/",
-            "deployUrl": "/templates/",
+            "baseHref": "/",
+            "deployUrl": "/",
             "outputPath": "dist/solution-upload",
             "index": "src/index.html",
             "main": "src/main.ts",
