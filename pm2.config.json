@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "solution-upload-portal-2",
+      "name": "solution-upload-portal",
       "script": "server.js",
       "args": [],
       "instances": "1",
@@ -10,7 +10,7 @@
       "merge_logs": true,
       "env": {
         "NODE_ENV": "production",
-        "PORT": 4202
+        "PORT": 4201
       }
     }
   ]
